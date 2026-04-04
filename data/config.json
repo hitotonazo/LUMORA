@@ -1,0 +1,8 @@
+{
+  "siteId": "site01",
+  "useR2": true,
+  "r2PublicBase": "https://pub-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.r2.dev/arg-assets/site01",
+  "r2PrivateBase": "/assets/site01",
+  "useLocalFallback": true,
+  "shareUrl": "https://x.com/arg_observerx?s=21&t=n9hS9eUFPNMQIQ1S4aDaOw"
+}

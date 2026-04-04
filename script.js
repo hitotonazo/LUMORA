@@ -5,6 +5,7 @@ const state = {
   products: [],
   reviews: null,
   news: null,
+  config: null,
   currentProductId: "shiromimi",
   showingBack: false
 };
@@ -42,16 +43,76 @@ const els = {
 document.addEventListener("DOMContentLoaded", init);
 
 async function init() {
-  const [products, reviews, news] = await Promise.all([
+  const [products, reviews, news, config] = await Promise.all([
     fetch("data/products.json").then(r => r.json()),
     fetch("data/reviews.json").then(r => r.json()),
-    fetch("data/news.json").then(r => r.json())
+    fetch("data/news.json").then(r => r.json()),
+    fetch("data/config.json").then(r => r.json()).catch(() => null)
   ]);
   state.products = products;
   state.reviews = reviews;
   state.news = news;
+  state.config = config;
+  applyStaticAssetPaths();
   setMode(getModeFromUrl());
   bindEvents();
+}
+
+
+function resolveAssetPath(path) {
+  if (!path || !state.config || !state.config.useR2) return path;
+
+  const publicBase = (state.config.r2PublicBase || "").replace(/\/$/, "");
+  const privateBase = (state.config.r2PrivateBase || "").replace(/\/$/, "");
+
+  if (path.startsWith("images/normal/")) {
+    return `${publicBase}/normal/${path.replace("images/normal/", "")}`;
+  }
+  if (path.startsWith("images/ui/")) {
+    return `${publicBase}/shared/ui/${path.replace("images/ui/", "")}`;
+  }
+  if (path.startsWith("images/anomaly1/")) {
+    return `${privateBase}/anomaly1/${path.replace("images/anomaly1/", "")}`;
+  }
+  if (path.startsWith("images/anomaly2/")) {
+    return `${privateBase}/anomaly2/${path.replace("images/anomaly2/", "")}`;
+  }
+  if (path.startsWith("images/anomaly3/")) {
+    return `${privateBase}/anomaly3/${path.replace("images/anomaly3/", "")}`;
+  }
+  if (path.startsWith("images/truth/")) {
+    return `${privateBase}/truth/${path.replace("images/truth/", "")}`;
+  }
+  return path;
+}
+
+function withFallback(primary, fallback) {
+  return primary || fallback;
+}
+
+function bindImageFallback(img, fallback) {
+  if (!img || !fallback || img.dataset.fallbackBound === "1") return;
+  img.dataset.fallbackBound = "1";
+  img.addEventListener("error", () => {
+    if (state.config?.useLocalFallback && img.src !== new URL(fallback, location.href).href) {
+      img.src = fallback;
+    }
+  });
+}
+
+function setImageSource(img, originalPath) {
+  if (!img || !originalPath) return;
+  const resolved = resolveAssetPath(originalPath);
+  bindImageFallback(img, originalPath);
+  img.src = resolved;
+}
+
+function applyStaticAssetPaths() {
+  document.querySelectorAll('img[src^="images/"]').forEach(img => {
+    const original = img.getAttribute("src");
+    img.dataset.originalSrc = original;
+    setImageSource(img, original);
+  });
 }
 
 function bindEvents() {
@@ -148,8 +209,8 @@ function setMode(mode) {
 
 function renderHeaderAndHero() {
   const truth = state.mode === "truth";
-  els.siteLogo.src = truth ? "images/truth/img_logo_header_truth_600x160.png" : "images/ui/img_logo_header_600x160.png";
-  els.heroImage.src = truth ? "images/truth/img_hero_collage_truth_1200x800.png" : "images/normal/img_hero_collage_1200x800.png";
+  setImageSource(els.siteLogo, truth ? "images/truth/img_logo_header_truth_600x160.png" : "images/ui/img_logo_header_600x160.png");
+  setImageSource(els.heroImage, truth ? "images/truth/img_hero_collage_truth_1200x800.png" : "images/normal/img_hero_collage_1200x800.png");
   if (truth) {
     document.title = "記録保管ページ";
     els.heroTitle.textContent = "これは販売ページではなく、記録の保管ページです。";
@@ -168,7 +229,7 @@ function renderProducts() {
     card.className = "product-card";
     const imgSrc = getProductImage(product);
     card.innerHTML = `
-      <img src="${imgSrc}" alt="${product.name}">
+      <img src="${resolveAssetPath(imgSrc)}" alt="${product.name}" data-fallback="${imgSrc}">
       <div class="product-copy">
         <div class="meta"><span>${product.series}</span><span>${product.price}</span></div>
         <h3>${product.name}</h3>
@@ -180,6 +241,8 @@ function renderProducts() {
       </div>`;
     els.productGrid.appendChild(card);
   });
+
+  els.productGrid.querySelectorAll("img[data-fallback]").forEach(img => bindImageFallback(img, img.dataset.fallback));
 
   els.productGrid.querySelectorAll("[data-view]").forEach(btn => {
     btn.addEventListener("click", () => {
@@ -211,7 +274,7 @@ function renderDetail() {
   let imgSrc = getProductImage(product);
   if (state.showingBack && state.mode === "anomaly2") imgSrc = product.backImage;
   else if (state.showingBack && state.mode !== "anomaly2") imgSrc = product.image;
-  els.detailImage.src = imgSrc;
+  setImageSource(els.detailImage, imgSrc);
   els.detailImage.alt = product.name;
   els.toggleBackBtn.textContent = state.mode === "anomaly2" ? "裏面を見る" : (state.showingBack ? "表面に戻す" : "裏面を見る");
 }

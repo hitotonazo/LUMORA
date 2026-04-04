@@ -1,0 +1,71 @@
+[
+  {
+    "id": "shiromimi",
+    "name": "しろみみ",
+    "series": "森のこもの",
+    "price": "¥3,400",
+    "birthplace": "霧ふかい森",
+    "tagline": "やわらかな白い耳が印象的な定番キャラクター。",
+    "description": "抱きしめやすいサイズ感と、少しだけ不思議な表情が人気です。",
+    "image": "images/normal/img_product_shiromimi_front_800x800.png",
+    "imageAnomaly1": "images/anomaly1/img_product_shiromimi_front_eyehuman_800x800.png",
+    "imageTruth": "images/truth/img_product_shiromimi_truth_800x800.png",
+    "backImage": "images/anomaly2/img_product_shiromimi_back_bloody_800x800.png",
+    "craftNormal": "手縫いで表情を整え、綿をやさしく詰めて仕上げます。",
+    "craftTruth": "表情を整えるため、目元の位置を固定し、内部を丁寧に詰め直します。"
+  },
+  {
+    "id": "morikuma",
+    "name": "もりくま",
+    "series": "森のこもの",
+    "price": "¥3,900",
+    "birthplace": "深い林道のはずれ",
+    "tagline": "どっしりした体つきと丸い鼻が特徴。",
+    "description": "落ち着いた配色で、インテリアにもなじみやすい一体です。",
+    "image": "images/normal/img_product_morikuma_front_800x800.png",
+    "imageTruth": "images/truth/img_product_morikuma_truth_800x800.png",
+    "backImage": "images/anomaly2/img_product_morikuma_back_bloody_800x800.png",
+    "craftNormal": "やわらかな生地を重ね、丸みのある形に整えています。",
+    "craftTruth": "形を崩さないよう縫い目を増やし、内部の固定を強めています。"
+  },
+  {
+    "id": "koroneko",
+    "name": "ころねこ",
+    "series": "町のまどべ",
+    "price": "¥3,200",
+    "birthplace": "街灯の下",
+    "tagline": "小さく丸まった姿がかわいい黒ねこモチーフ。",
+    "description": "手のひらサイズで飾りやすく、ギフトにもおすすめです。",
+    "image": "images/normal/img_product_koroneko_front_800x800.png",
+    "imageTruth": "images/truth/img_product_koroneko_truth_800x800.png",
+    "backImage": "images/anomaly2/img_product_koroneko_back_bloody_800x800.png",
+    "craftNormal": "毛並みの流れを意識しながら、なめらかに縫製しています。",
+    "craftTruth": "表面を整えたあと、不要なズレが出ないよう再固定します。"
+  },
+  {
+    "id": "yoruneko",
+    "name": "よるねこ",
+    "series": "海べのねむり",
+    "price": "¥3,500",
+    "birthplace": "静かな波打ち際",
+    "tagline": "夜を思わせる濃紺カラーのねこ。",
+    "description": "落ち着いた色味で、シリーズの中でも特に人気があります。",
+    "image": "images/normal/img_product_yoruneko_front_800x800.png",
+    "backImage": "images/anomaly2/img_product_yoruneko_back_bloody_800x800.png",
+    "craftNormal": "色の濃淡を見ながらパーツを縫い合わせています。",
+    "craftTruth": "境目が目立たないよう、重ねた箇所を深く留めています。"
+  },
+  {
+    "id": "hoshiumi",
+    "name": "ほしうみ",
+    "series": "海べのねむり",
+    "price": "¥3,800",
+    "birthplace": "星の見える岸辺",
+    "tagline": "海と夜空をイメージした青いキャラクター。",
+    "description": "ころんとしたフォルムで、シリーズセットにも向いています。",
+    "image": "images/normal/img_product_hoshiumi_front_800x800.png",
+    "backImage": "images/anomaly2/img_product_hoshiumi_back_bloody_800x800.png",
+    "craftNormal": "丸みがきれいに出るよう中綿量を細かく調整しています。",
+    "craftTruth": "内部の偏りを防ぐため、何度か開いて調整を繰り返します。"
+  }
+]

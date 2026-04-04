@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>こもれびぬい｜やさしいぬくもりのぬいぐるみ</title>
+  <meta name="description" content="やさしい表情と、手仕事のぬくもりを届けるぬいぐるみ販売サイト。">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-mode="normal">
+  <div id="screen-noise" aria-hidden="true"></div>
+  <div id="transition-overlay" class="overlay" aria-hidden="true">
+    <div class="overlay__noise"></div>
+    <div class="overlay__content">
+      <p class="overlay__text">サイトが改変されました。</p>
+      <p class="overlay__sub">画面をクリックすると次へ進みます。</p>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="container header-row">
+      <a class="logo-wrap" href="?mode=normal" aria-label="トップへ戻る">
+        <img id="site-logo" src="images/ui/img_logo_header_600x160.png" alt="こもれびぬい">
+      </a>
+      <nav class="nav">
+        <a href="#products">商品一覧</a>
+        <a href="#characters">人気キャラ</a>
+        <a href="#news">お知らせ</a>
+        <a href="#reviews">レビュー</a>
+      </nav>
+      <div class="icon-row">
+        <button class="icon-btn" aria-label="検索">
+          <img src="images/ui/img_icon_search_64x64.png" alt="">
+        </button>
+        <button class="icon-btn" aria-label="カート">
+          <img src="images/ui/img_icon_cart_64x64.png" alt="">
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">HANDMADE PLUSH TOYS</p>
+          <h1 id="hero-title">やさしいぬくもりを、暮らしのそばに。</h1>
+          <p id="hero-text">毎日の景色になじむ、物語のあるぬいぐるみをお届けします。</p>
+          <form id="search-form" class="search-bar">
+            <input id="search-input" type="search" placeholder="キャラクター名で検索">
+            <button type="submit">検索</button>
+          </form>
+          <p id="search-message" class="search-message" aria-live="polite"></p>
+        </div>
+        <div class="hero-visual">
+          <img id="hero-image" src="images/normal/img_hero_collage_1200x800.png" alt="ぬいぐるみコラージュ">
+        </div>
+      </div>
+    </section>
+
+    <section id="products" class="section">
+      <div class="container">
+        <div class="section-head">
+          <h2>おすすめ商品</h2>
+          <p>気になる子を見つけたら、詳細から制作工程もご覧いただけます。</p>
+        </div>
+        <div id="product-grid" class="product-grid"></div>
+      </div>
+    </section>
+
+    <section id="detail" class="section detail-section">
+      <div class="container">
+        <div class="section-head">
+          <h2>商品詳細</h2>
+          <p>画像、設定、制作工程をひとつずつ確認できます。</p>
+        </div>
+        <div class="detail-card">
+          <div class="detail-media">
+            <img id="detail-image" src="images/normal/img_product_shiromimi_front_800x800.png" alt="商品詳細">
+            <div class="detail-actions">
+              <button id="toggle-back-btn" class="ghost-btn">裏面を見る</button>
+              <button id="open-craft-btn" class="ghost-btn">制作工程を見る</button>
+            </div>
+          </div>
+          <div class="detail-copy">
+            <p id="detail-series" class="detail-series"></p>
+            <h3 id="detail-name"></h3>
+            <p id="detail-price" class="detail-price"></p>
+            <p id="detail-description"></p>
+            <dl class="spec-list">
+              <div><dt>出身地</dt><dd id="detail-birthplace"></dd></div>
+              <div><dt>制作方法</dt><dd id="detail-craft"></dd></div>
+            </dl>
+            <div id="craft-panel" class="craft-panel hidden">
+              <p class="craft-title">制作工程</p>
+              <p id="craft-text"></p>
+              <img id="craft-image" src="images/anomaly3/img_product_detail_craft_900x900.png" alt="制作工程イメージ">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="characters" class="section alt-section">
+      <div class="container">
+        <div class="section-head">
+          <h2>人気キャラクター</h2>
+          <p>それぞれ異なる物語と出身地を持っています。</p>
+        </div>
+        <div class="character-grid">
+          <article class="character-card">
+            <img src="images/normal/img_character_shiromimi_800x800.png" alt="しろみみ">
+            <h3>しろみみ</h3>
+            <p>いちばん人気の定番キャラクター。</p>
+          </article>
+          <article class="character-card">
+            <img src="images/normal/img_character_morikuma_800x800.png" alt="もりくま">
+            <h3>もりくま</h3>
+            <p>落ち着いた存在感のある、森シリーズの中心キャラ。</p>
+          </article>
+          <article class="character-card">
+            <img src="images/normal/img_character_koroneko_800x800.png" alt="ころねこ">
+            <h3>ころねこ</h3>
+            <p>ちいさく丸いフォルムが人気の黒ねこモチーフ。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <h2>シリーズカテゴリ</h2>
+          <p>暮らしに合わせて選べる、3つの定番シリーズ。</p>
+        </div>
+        <div id="series-grid" class="series-grid">
+          <article class="series-card">
+            <img src="images/normal/img_series_forest_800x600.png" alt="森のシリーズ">
+            <h3>森のこもの</h3>
+            <p>やさしい色合いと木陰のような静けさを感じるシリーズ。</p>
+          </article>
+          <article class="series-card">
+            <img src="images/normal/img_series_seaside_800x600.png" alt="海のシリーズ">
+            <h3>海べのねむり</h3>
+            <p>深い青と静かな波をイメージした人気シリーズ。</p>
+          </article>
+          <article class="series-card">
+            <img src="images/normal/img_series_town_800x600.png" alt="街のシリーズ">
+            <h3>町のまどべ</h3>
+            <p>部屋に飾りやすい、小ぶりで親しみやすいラインです。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="news" class="section alt-section">
+      <div class="container">
+        <div class="section-head">
+          <h2>お知らせ</h2>
+          <p>新作や入荷情報を掲載しています。</p>
+        </div>
+        <div id="news-list" class="news-list"></div>
+      </div>
+    </section>
+
+    <section id="reviews" class="section">
+      <div class="container">
+        <div class="section-head">
+          <h2>レビュー</h2>
+          <p>ご購入いただいた方の感想をご紹介します。</p>
+        </div>
+        <div id="review-list" class="review-list"></div>
+      </div>
+    </section>
+
+    <section class="section brand-section">
+      <div class="container narrow">
+        <h2 id="brand-title">こもれびぬいについて</h2>
+        <p id="brand-text">こもれびぬいは、日常にそっと寄り添うぬいぐるみをテーマに、小さな工房で制作を続けています。素材のやわらかさと、長く一緒に過ごせる表情づくりを大切にしています。</p>
+        <div id="share-wrap" class="share-wrap hidden">
+          <p class="share-note">この記録について、外に残すこともできます。消える前に共有する場合はこちらから。</p>
+          <button id="share-btn" class="share-btn">この記録を投稿する</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>©ぺいぽぴー</p>
+    <p>※このWebサイトの内容はフィクションであり、実在の人物・団体とは一切関係がありません。</p>
+  </footer>
+
+  <script src="data/share-config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

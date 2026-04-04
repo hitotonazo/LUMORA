@@ -1,202 +1,269 @@
 
-:root{
-  --bg:#fbf7f2;
-  --bg-alt:#f3ede6;
-  --surface:#fffdfa;
-  --line:#e5dbcf;
-  --text:#2a2522;
-  --muted:#72675f;
-  --accent:#8f6f5c;
-  --truth-bg:#130d10;
-  --truth-surface:#1e1519;
-  --truth-line:#56313b;
-  --truth-text:#f0e8ea;
-  --truth-muted:#c5adb4;
-  --truth-accent:#b9475e;
-  --container:min(1120px, calc(100% - 32px));
-}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
-  margin:0;
-  font-family:"Hiragino Sans","Yu Gothic","Meiryo",sans-serif;
-  color:var(--text);
-  background:var(--bg);
-  line-height:1.7;
-}
-img{max-width:100%;display:block}
-a{color:inherit;text-decoration:none}
-button,input{font:inherit}
-.container{width:var(--container);margin:0 auto}
-.narrow{max-width:760px}
-.site-header{
-  position:sticky;top:0;z-index:30;
-  background:rgba(251,247,242,.92);
-  backdrop-filter:blur(10px);
-  border-bottom:1px solid var(--line);
-}
-.header-row{display:flex;align-items:center;gap:20px;min-height:76px}
-.logo-wrap img{height:40px;width:auto}
-.nav{display:flex;gap:18px;flex:1;justify-content:center;font-size:14px}
-.nav a{opacity:.85}
-.icon-row{display:flex;gap:10px}
-.icon-btn{
-  width:42px;height:42px;border:1px solid var(--line);border-radius:999px;background:#fff;
-  display:grid;place-items:center;padding:0;cursor:pointer;
-}
-.icon-btn img{width:20px;height:20px}
-.hero{padding:44px 0 24px}
-.hero-grid{display:grid;grid-template-columns:1fr 1.1fr;gap:28px;align-items:center}
-.eyebrow{letter-spacing:.12em;font-size:12px;color:var(--muted);margin:0 0 12px}
-h1,h2,h3,p{margin:0}
-h1{font-size:clamp(30px,4vw,48px);line-height:1.2;margin-bottom:14px}
-h2{font-size:clamp(24px,3vw,34px);line-height:1.3}
-.hero-copy p:not(.eyebrow):not(.search-message){font-size:16px;color:var(--muted)}
-.hero-visual img{
-  border-radius:28px;overflow:hidden;border:1px solid var(--line);background:#fff;
-  box-shadow:0 18px 45px rgba(40,29,20,.08);
-}
-.search-bar{display:flex;gap:10px;margin-top:20px}
-.search-bar input{
-  flex:1;border:1px solid var(--line);border-radius:999px;padding:14px 18px;background:#fff;color:var(--text)
-}
-.search-bar button,.share-btn,.ghost-btn{
-  border:1px solid var(--line);background:#fff;color:var(--text);border-radius:999px;padding:12px 18px;cursor:pointer
-}
-.search-message{min-height:26px;margin-top:10px;color:var(--accent);font-size:14px}
-.section{padding:36px 0}
-.alt-section{background:var(--bg-alt)}
-.section-head{margin-bottom:22px}
-.section-head p{color:var(--muted);margin-top:6px}
-.product-grid,.character-grid,.series-grid,.review-list{
-  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px
-}
-.product-card,.character-card,.series-card,.review-card,.detail-card{
-  background:var(--surface);border:1px solid var(--line);border-radius:24px;overflow:hidden;
-  box-shadow:0 12px 30px rgba(40,29,20,.05)
-}
-.product-card img,.character-card img,.series-card img{aspect-ratio:1/1;object-fit:cover;background:#fff}
-.series-card img{aspect-ratio:4/3}
-.product-copy,.character-card,.series-card,.review-card{padding:14px}
-.product-copy h3,.character-card h3,.series-card h3{font-size:20px;margin-bottom:6px}
-.meta{display:flex;justify-content:space-between;gap:8px;font-size:14px;color:var(--muted);margin-bottom:8px}
-.product-copy p,.character-card p,.series-card p,.review-card p,.news-item p,.detail-copy p{color:var(--muted)}
-.product-actions{display:flex;gap:10px;margin-top:14px}
-.mini-btn{
-  border:1px solid var(--line);background:transparent;border-radius:999px;padding:10px 14px;cursor:pointer
-}
-.detail-card{display:grid;grid-template-columns:1fr 1fr;gap:0}
-.detail-media,.detail-copy{padding:18px}
-.detail-media img{border-radius:20px;border:1px solid var(--line);background:#fff}
-.detail-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
-.detail-series{font-size:13px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
-.detail-price{font-weight:700;color:var(--text)!important;margin:8px 0 14px}
-.spec-list{display:grid;gap:14px;margin:18px 0 0}
-.spec-list div{padding-top:14px;border-top:1px solid var(--line)}
-.spec-list dt{font-weight:700;margin-bottom:6px}
-.craft-panel{margin-top:16px;padding:14px;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.7)}
-.craft-panel.hidden,.share-wrap.hidden{display:none}
-.craft-title{font-weight:700;color:var(--text)!important;margin-bottom:8px}
-.craft-panel img{margin-top:12px;border-radius:16px;border:1px solid var(--line)}
-.news-list{display:grid;gap:12px}
-.news-item{
-  display:grid;grid-template-columns:100px 1fr;gap:16px;padding:14px 16px;border:1px solid var(--line);
-  border-radius:18px;background:var(--surface)
-}
-.news-item time{font-weight:700}
-.brand-section{text-align:center}
-#brand-text{margin-top:12px;color:var(--muted)}
-.share-wrap{margin-top:20px}
-.share-note{margin-bottom:12px;color:var(--muted)}
-.share-btn{background:#111;color:#fff;border-color:#333}
-.site-footer{
-  padding:24px 16px 34px;text-align:center;border-top:1px solid var(--line);font-size:13px;color:var(--muted)
+const MODES = ["normal", "anomaly1", "anomaly2", "anomaly3", "truth"];
+const state = {
+  mode: "normal",
+  products: [],
+  reviews: null,
+  news: null,
+  currentProductId: "shiromimi",
+  showingBack: false
+};
+
+const els = {
+  body: document.body,
+  overlay: document.getElementById("transition-overlay"),
+  siteLogo: document.getElementById("site-logo"),
+  heroTitle: document.getElementById("hero-title"),
+  heroText: document.getElementById("hero-text"),
+  heroImage: document.getElementById("hero-image"),
+  productGrid: document.getElementById("product-grid"),
+  detailSeries: document.getElementById("detail-series"),
+  detailName: document.getElementById("detail-name"),
+  detailPrice: document.getElementById("detail-price"),
+  detailDescription: document.getElementById("detail-description"),
+  detailBirthplace: document.getElementById("detail-birthplace"),
+  detailCraft: document.getElementById("detail-craft"),
+  detailImage: document.getElementById("detail-image"),
+  craftPanel: document.getElementById("craft-panel"),
+  craftText: document.getElementById("craft-text"),
+  newsList: document.getElementById("news-list"),
+  reviewList: document.getElementById("review-list"),
+  toggleBackBtn: document.getElementById("toggle-back-btn"),
+  openCraftBtn: document.getElementById("open-craft-btn"),
+  searchForm: document.getElementById("search-form"),
+  searchInput: document.getElementById("search-input"),
+  searchMessage: document.getElementById("search-message"),
+  brandTitle: document.getElementById("brand-title"),
+  brandText: document.getElementById("brand-text"),
+  shareWrap: document.getElementById("share-wrap"),
+  shareBtn: document.getElementById("share-btn"),
+};
+
+document.addEventListener("DOMContentLoaded", init);
+
+async function init() {
+  const [products, reviews, news] = await Promise.all([
+    fetch("data/products.json").then(r => r.json()),
+    fetch("data/reviews.json").then(r => r.json()),
+    fetch("data/news.json").then(r => r.json())
+  ]);
+  state.products = products;
+  state.reviews = reviews;
+  state.news = news;
+  setMode(getModeFromUrl());
+  bindEvents();
 }
 
-.overlay{
-  position:fixed;inset:0;z-index:100;display:none;place-items:center;background:rgba(8,4,6,.88);overflow:hidden
-}
-.overlay.active{display:grid}
-.overlay__noise,.overlay__noise::before,.overlay__noise::after,
-#screen-noise::before,#screen-noise::after{
-  content:"";position:absolute;inset:-20%;
-  background:
-    repeating-linear-gradient(0deg, rgba(255,255,255,.06) 0 2px, transparent 2px 4px),
-    repeating-linear-gradient(90deg, rgba(255,0,60,.05) 0 3px, rgba(0,0,0,0) 3px 6px);
-  mix-blend-mode:screen;
-  animation:noiseShift .18s infinite steps(2);
-}
-.overlay__content{
-  position:relative;z-index:2;text-align:center;padding:24px
-}
-.overlay__text{font-size:clamp(28px,6vw,64px);font-weight:700;color:#ffe9ef;text-shadow:0 0 18px rgba(255,45,88,.55)}
-.overlay__sub{margin-top:10px;color:#d3c0c6}
-@keyframes noiseShift{
-  0%{transform:translate(0,0)}
-  25%{transform:translate(-1%,1%)}
-  50%{transform:translate(1%,-1%)}
-  75%{transform:translate(2%,-2%)}
-  100%{transform:translate(0,0)}
-}
-#screen-noise{
-  position:fixed;inset:0;pointer-events:none;z-index:90;opacity:0;transition:opacity .3s ease
-}
-body[data-mode="truth"] #screen-noise{opacity:.08}
-body.glitching #screen-noise{opacity:.75}
-body.glitching{transform:translateX(1px)}
-body[data-mode="truth"]{
-  background:var(--truth-bg);color:var(--truth-text)
-}
-body[data-mode="truth"] .site-header{
-  background:rgba(19,13,16,.92);border-color:var(--truth-line)
-}
-body[data-mode="truth"] .site-header,
-body[data-mode="truth"] .site-footer,
-body[data-mode="truth"] .section-head p,
-body[data-mode="truth"] .hero-copy p:not(.eyebrow):not(.search-message),
-body[data-mode="truth"] .product-copy p,
-body[data-mode="truth"] .character-card p,
-body[data-mode="truth"] .series-card p,
-body[data-mode="truth"] .review-card p,
-body[data-mode="truth"] .news-item p,
-body[data-mode="truth"] .detail-copy p,
-body[data-mode="truth"] .share-note,
-body[data-mode="truth"] #brand-text{color:var(--truth-muted)}
-body[data-mode="truth"] .alt-section{background:#171115}
-body[data-mode="truth"] .product-card,
-body[data-mode="truth"] .character-card,
-body[data-mode="truth"] .series-card,
-body[data-mode="truth"] .review-card,
-body[data-mode="truth"] .detail-card,
-body[data-mode="truth"] .news-item,
-body[data-mode="truth"] .craft-panel,
-body[data-mode="truth"] .icon-btn,
-body[data-mode="truth"] .search-bar input,
-body[data-mode="truth"] .search-bar button,
-body[data-mode="truth"] .ghost-btn{
-  background:var(--truth-surface);border-color:var(--truth-line);color:var(--truth-text)
-}
-body[data-mode="truth"] .site-footer{border-color:var(--truth-line)}
-body[data-mode="truth"] .hero-visual img,
-body[data-mode="truth"] .detail-media img,
-body[data-mode="truth"] .product-card img,
-body[data-mode="truth"] .character-card img,
-body[data-mode="truth"] .series-card img,
-body[data-mode="truth"] .craft-panel img{
-  filter:grayscale(.25) contrast(1.05) saturate(.6)
-}
-body[data-mode="truth"] .share-btn{background:#0f0f10;color:#fff;border-color:#6a3f49}
-body[data-mode="truth"] .search-message{color:#ff8699}
+function bindEvents() {
+  els.overlay.addEventListener("click", () => {
+    const next = els.overlay.dataset.nextMode;
+    if (next) {
+      updateUrlMode(next);
+      setMode(next);
+    }
+    els.overlay.classList.remove("active");
+    els.overlay.removeAttribute("data-next-mode");
+  });
 
-@media (max-width: 900px){
-  .hero-grid,.detail-card{grid-template-columns:1fr}
-  .nav{display:none}
+  els.toggleBackBtn.addEventListener("click", () => {
+    if (state.mode === "anomaly2") {
+      triggerTransition("anomaly3");
+      return;
+    }
+    state.showingBack = !state.showingBack;
+    renderDetail();
+  });
+
+  els.openCraftBtn.addEventListener("click", () => {
+    els.craftPanel.classList.remove("hidden");
+    renderDetail();
+    if (state.mode === "anomaly3") {
+      triggerTransition("truth");
+    }
+  });
+
+  els.searchForm.addEventListener("submit", e => {
+    e.preventDefault();
+    const q = els.searchInput.value.trim().toLowerCase();
+    if (!q) {
+      els.searchMessage.textContent = "検索語を入力してください。";
+      return;
+    }
+    const product = state.products.find(p => p.name.includes(q) || p.id.includes(q));
+    if (product) {
+      state.currentProductId = product.id;
+      state.showingBack = false;
+      renderProducts();
+      renderDetail();
+      document.getElementById("detail").scrollIntoView({behavior:"smooth", block:"start"});
+      els.searchMessage.textContent = `「${product.name}」を表示しました。`;
+    } else {
+      els.searchMessage.textContent = `「${els.searchInput.value}」に一致する商品は見つかりませんでした。`;
+    }
+  });
+
+  els.shareBtn.addEventListener("click", () => {
+    const config = window.SHARE_CONFIG || {};
+    const text = `${config.shareText || ""}\n${config.originTweetUrl || location.href}`.trim();
+    const url = `https://x.com/intent/tweet?text=${encodeURIComponent(text)}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+  });
+
+  window.addEventListener("popstate", () => setMode(getModeFromUrl()));
 }
-@media (max-width: 720px){
-  .product-grid,.character-grid,.series-grid,.review-list{grid-template-columns:1fr}
-  .news-item{grid-template-columns:1fr;gap:6px}
-  .header-row{min-height:68px}
-  .logo-wrap img{height:34px}
-  .hero{padding-top:28px}
-  .section{padding:28px 0}
+
+function getModeFromUrl() {
+  const params = new URLSearchParams(location.search);
+  const mode = params.get("mode") || "normal";
+  return MODES.includes(mode) ? mode : "normal";
+}
+
+function updateUrlMode(mode) {
+  const url = new URL(location.href);
+  url.searchParams.set("mode", mode);
+  history.pushState({}, "", url);
+}
+
+function setMode(mode) {
+  state.mode = mode;
+  els.body.dataset.mode = mode;
+  state.showingBack = false;
+  if (mode === "truth") {
+    els.craftPanel.classList.remove("hidden");
+    els.shareWrap.classList.remove("hidden");
+  } else {
+    els.craftPanel.classList.add("hidden");
+    els.shareWrap.classList.add("hidden");
+  }
+  renderHeaderAndHero();
+  renderProducts();
+  renderDetail();
+  renderNews();
+  renderReviews();
+  renderBrand();
+  if (mode === "truth") {
+    startTruthGlitch();
+  }
+}
+
+function renderHeaderAndHero() {
+  const truth = state.mode === "truth";
+  els.siteLogo.src = truth ? "images/truth/img_logo_header_truth_600x160.png" : "images/ui/img_logo_header_600x160.png";
+  els.heroImage.src = truth ? "images/truth/img_hero_collage_truth_1200x800.png" : "images/normal/img_hero_collage_1200x800.png";
+  if (truth) {
+    document.title = "記録保管ページ";
+    els.heroTitle.textContent = "これは販売ページではなく、記録の保管ページです。";
+    els.heroText.textContent = "商品説明、制作工程、レビュー、お知らせの意味を読み直してください。";
+  } else {
+    document.title = "こもれびぬい｜やさしいぬくもりのぬいぐるみ";
+    els.heroTitle.textContent = "やさしいぬくもりを、暮らしのそばに。";
+    els.heroText.textContent = "毎日の景色になじむ、物語のあるぬいぐるみをお届けします。";
+  }
+}
+
+function renderProducts() {
+  els.productGrid.innerHTML = "";
+  state.products.forEach(product => {
+    const card = document.createElement("article");
+    card.className = "product-card";
+    const imgSrc = getProductImage(product);
+    card.innerHTML = `
+      <img src="${imgSrc}" alt="${product.name}">
+      <div class="product-copy">
+        <div class="meta"><span>${product.series}</span><span>${product.price}</span></div>
+        <h3>${product.name}</h3>
+        <p>${state.mode === "truth" ? product.craftTruth : product.tagline}</p>
+        <div class="product-actions">
+          <button class="mini-btn" data-view="${product.id}">詳細を見る</button>
+          ${state.mode === "anomaly1" && product.id === "shiromimi" ? `<button class="mini-btn anomaly-trigger" data-trigger="anomaly2">この子を見る</button>` : ``}
+        </div>
+      </div>`;
+    els.productGrid.appendChild(card);
+  });
+
+  els.productGrid.querySelectorAll("[data-view]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      state.currentProductId = btn.dataset.view;
+      state.showingBack = false;
+      renderProducts();
+      renderDetail();
+      document.getElementById("detail").scrollIntoView({behavior:"smooth", block:"start"});
+    });
+  });
+
+  els.productGrid.querySelectorAll("[data-trigger='anomaly2']").forEach(btn => {
+    btn.addEventListener("click", () => triggerTransition("anomaly2"));
+  });
+}
+
+function renderDetail() {
+  const product = state.products.find(p => p.id === state.currentProductId) || state.products[0];
+  els.detailSeries.textContent = product.series;
+  els.detailName.textContent = product.name;
+  els.detailPrice.textContent = product.price;
+  els.detailDescription.textContent = state.mode === "truth" ? product.craftTruth : product.description;
+  els.detailBirthplace.textContent = product.birthplace;
+  els.detailCraft.textContent = state.mode === "anomaly3" || state.mode === "truth" ? product.craftTruth : product.craftNormal;
+  els.craftText.textContent = state.mode === "truth"
+    ? "手順の一つひとつが、通常の制作工程ではなく“処理の記録”として読めるように変化しています。"
+    : "表情・縫製・綿入れの順に仕上げ、最終調整後に出荷します。";
+
+  let imgSrc = getProductImage(product);
+  if (state.showingBack && state.mode === "anomaly2") imgSrc = product.backImage;
+  else if (state.showingBack && state.mode !== "anomaly2") imgSrc = product.image;
+  els.detailImage.src = imgSrc;
+  els.detailImage.alt = product.name;
+  els.toggleBackBtn.textContent = state.mode === "anomaly2" ? "裏面を見る" : (state.showingBack ? "表面に戻す" : "裏面を見る");
+}
+
+function renderNews() {
+  const items = state.mode === "truth" ? state.news.truth : state.news.normal;
+  els.newsList.innerHTML = items.map(item => `
+    <article class="news-item">
+      <time>${item.date}</time>
+      <p>${item.title}</p>
+    </article>
+  `).join("");
+}
+
+function renderReviews() {
+  const items = state.mode === "truth" ? state.reviews.truth : state.reviews.normal;
+  els.reviewList.innerHTML = items.map(item => `
+    <article class="review-card">
+      <h3>${item.name}</h3>
+      <p>${item.text}</p>
+    </article>
+  `).join("");
+}
+
+function renderBrand() {
+  if (state.mode === "truth") {
+    els.brandTitle.textContent = "保管記録について";
+    els.brandText.textContent = "ここに並んでいた名称や説明は、すべて別の出来事を隠すための置き換えです。かわいい商品に見えたものは、別の形で残された記録でした。";
+  } else {
+    els.brandTitle.textContent = "こもれびぬいについて";
+    els.brandText.textContent = "こもれびぬいは、日常にそっと寄り添うぬいぐるみをテーマに、小さな工房で制作を続けています。素材のやわらかさと、長く一緒に過ごせる表情づくりを大切にしています。";
+  }
+}
+
+function getProductImage(product) {
+  if (state.mode === "truth" && product.imageTruth) return product.imageTruth;
+  if (state.mode === "anomaly1" && product.id === "shiromimi" && product.imageAnomaly1) return product.imageAnomaly1;
+  return product.image;
+}
+
+function triggerTransition(nextMode) {
+  els.overlay.dataset.nextMode = nextMode;
+  els.overlay.classList.add("active");
+}
+
+let glitchTimerStarted = false;
+function startTruthGlitch() {
+  if (glitchTimerStarted) return;
+  glitchTimerStarted = true;
+  setInterval(() => {
+    if (state.mode !== "truth") return;
+    document.body.classList.add("glitching");
+    setTimeout(() => document.body.classList.remove("glitching"), 1000);
+  }, 30000);
 }

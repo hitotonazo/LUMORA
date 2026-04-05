@@ -330,3 +330,13 @@ function startTruthGlitch() {
     setTimeout(() => document.body.classList.remove("glitching"), 1000);
   }, 30000);
 }
+
+const noiseOverlay=document.getElementById("noise-overlay");
+function runSiteAlteredOverlay(next){
+ if(!noiseOverlay)return;
+ noiseOverlay.classList.add("is-active");
+ noiseOverlay.onclick=()=>{
+  noiseOverlay.classList.remove("is-active");
+  if(next)next();
+ };
+}

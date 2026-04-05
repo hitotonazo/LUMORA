@@ -43,12 +43,12 @@ const els = {
 document.addEventListener("DOMContentLoaded", init);
 
 async function init() {
-  const [products, reviews, news, config] = await Promise.all([
+  const [products, reviews, news] = await Promise.all([
     fetch("data/products.json").then(r => r.json()),
     fetch("data/reviews.json").then(r => r.json()),
-    fetch("data/news.json").then(r => r.json()),
-    fetch("data/config.json").then(r => r.json()).catch(() => null)
+    fetch("data/news.json").then(r => r.json())
   ]);
+  const config = window.SITE_CONFIG || null;
   state.products = products;
   state.reviews = reviews;
   state.news = news;
@@ -63,7 +63,7 @@ function resolveAssetPath(path) {
   if (!path || !state.config || !state.config.useR2) return path;
 
   const publicBase = (state.config.r2PublicBase || "").replace(/\/$/, "");
-  const privateBase = (state.config.r2PrivateBase || "").replace(/\/$/, "");
+  if (!publicBase) return path;
 
   if (path.startsWith("images/normal/")) {
     return `${publicBase}/normal/${path.replace("images/normal/", "")}`;
@@ -72,16 +72,16 @@ function resolveAssetPath(path) {
     return `${publicBase}/shared/ui/${path.replace("images/ui/", "")}`;
   }
   if (path.startsWith("images/anomaly1/")) {
-    return `${privateBase}/anomaly1/${path.replace("images/anomaly1/", "")}`;
+    return `${publicBase}/anomaly1/${path.replace("images/anomaly1/", "")}`;
   }
   if (path.startsWith("images/anomaly2/")) {
-    return `${privateBase}/anomaly2/${path.replace("images/anomaly2/", "")}`;
+    return `${publicBase}/anomaly2/${path.replace("images/anomaly2/", "")}`;
   }
   if (path.startsWith("images/anomaly3/")) {
-    return `${privateBase}/anomaly3/${path.replace("images/anomaly3/", "")}`;
+    return `${publicBase}/anomaly3/${path.replace("images/anomaly3/", "")}`;
   }
   if (path.startsWith("images/truth/")) {
-    return `${privateBase}/truth/${path.replace("images/truth/", "")}`;
+    return `${publicBase}/truth/${path.replace("images/truth/", "")}`;
   }
   return path;
 }

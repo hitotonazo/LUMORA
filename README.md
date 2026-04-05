@@ -44,3 +44,22 @@ Example private asset URL:
 
 In R2, store the object key without `/assets/`, for example:
 - `site01/anomaly1/img_product_shiromimi_eye_800x800.png`
+
+
+## config.js方式について
+この版は Cloudflare Pages の R2 バインディングを使いません。
+`data/config.js` にある `r2PublicBase` を、あなたの R2 公開URLに書き換えてください。
+
+例:
+https://pub-xxxxxxxxxxxxxxxx.r2.dev/arg-assets/site01
+
+R2 の推奨配置:
+- normal/
+- anomaly1/
+- anomaly2/
+- anomaly3/
+- truth/
+- shared/ui/
+
+この版では、通常画像・違和感画像・真相画像をすべて公開R2から参照します。
+そのため、非公開配信や Functions は不要です。

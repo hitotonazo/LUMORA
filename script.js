@@ -429,3 +429,48 @@ function runSiteAlteredOverlay(next){
 
 // この版では「裏面を見る」→メイン商品画像の差し替え で進行します。
 // 裏面表示中に商品画像をクリックすると、改変演出のあと違和感②へ進みます。
+
+
+
+/* === backside click overlay fix === */
+(function () {
+  function bindBacksideOverlayTrigger() {
+    const detailImage = document.getElementById("detail-image");
+    if (!detailImage) return;
+
+    detailImage.addEventListener("click", function () {
+      try {
+        const isBack =
+          (window.state && window.state.showingBack) ||
+          document.body.classList.contains("is-showing-back") ||
+          /img_product_shiromimi_eye_800x800\.png/.test(detailImage.getAttribute("src") || "");
+
+        const params = new URLSearchParams(window.location.search);
+        const mode = params.get("mode") || "normal";
+
+        if (!isBack) return;
+        if (!(mode === "normal" || mode === "anomaly1")) return;
+
+        if (typeof runSiteAlteredOverlay === "function") {
+          runSiteAlteredOverlay(function () {
+            const url = new URL(window.location.href);
+            url.searchParams.set("mode", "anomaly2");
+            window.location.href = url.toString();
+          });
+        } else {
+          const url = new URL(window.location.href);
+          url.searchParams.set("mode", "anomaly2");
+          window.location.href = url.toString();
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", bindBacksideOverlayTrigger);
+  } else {
+    bindBacksideOverlayTrigger();
+  }
+})();

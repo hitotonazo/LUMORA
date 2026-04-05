@@ -127,10 +127,6 @@ function bindEvents() {
   });
 
   els.toggleBackBtn.addEventListener("click", () => {
-    if (state.mode === "anomaly2") {
-      triggerTransition("anomaly3");
-      return;
-    }
     state.showingBack = !state.showingBack;
     renderDetail();
   });
@@ -141,6 +137,21 @@ function bindEvents() {
     if (state.mode === "anomaly3") {
       triggerTransition("truth");
     }
+  });
+  els.detailImage.addEventListener("click", () => {
+    if (!state.showingBack) return;
+    if (state.mode !== "normal" && state.mode !== "anomaly1") return;
+
+    if (typeof runSiteAlteredOverlay === "function") {
+      runSiteAlteredOverlay(() => {
+        updateUrlMode("anomaly2");
+        setMode("anomaly2");
+      });
+      return;
+    }
+
+    updateUrlMode("anomaly2");
+    setMode("anomaly2");
   });
 
   els.searchForm.addEventListener("submit", e => {
@@ -272,11 +283,10 @@ function renderDetail() {
     : "表情・縫製・綿入れの順に仕上げ、最終調整後に出荷します。";
 
   let imgSrc = getProductImage(product);
-  if (state.showingBack && state.mode === "anomaly2") imgSrc = product.backImage;
-  else if (state.showingBack && state.mode !== "anomaly2") imgSrc = product.image;
+  if (state.showingBack) imgSrc = product.backImage || imgSrc;
   setImageSource(els.detailImage, imgSrc);
-  els.detailImage.alt = product.name;
-  els.toggleBackBtn.textContent = state.mode === "anomaly2" ? "裏面を見る" : (state.showingBack ? "表面に戻す" : "裏面を見る");
+  els.detailImage.alt = state.showingBack ? `${product.name}の裏面` : product.name;
+  els.toggleBackBtn.textContent = state.showingBack ? "表面に戻す" : "裏面を見る";
 }
 
 function renderNews() {
@@ -415,3 +425,7 @@ function runSiteAlteredOverlay(next){
   // 初期モード反映
   setBodyStage(getModeFromQuery());
 })();
+
+
+// この版では「裏面を見る」→メイン商品画像の差し替え で進行します。
+// 裏面表示中に商品画像をクリックすると、改変演出のあと違和感②へ進みます。

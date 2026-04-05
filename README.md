@@ -80,3 +80,9 @@ R2 の推奨配置:
 
 ## 修正
 - 裏面画像は R2 ではなくローカル画像 `images/anomaly1/img_product_shiromimi_eye_800x800.png` を優先表示するよう修正
+
+
+## 修正内容
+- 「裏面を見る」でメインの商品画像を裏面画像に切り替える仕様に修正
+- しろみみの裏面画像は `images/anomaly1/img_product_shiromimi_eye_800x800.png` を使用
+- 裏面表示中に商品画像をクリックすると、「サイトが改変されました。」演出後に `?mode=anomaly2` へ進む

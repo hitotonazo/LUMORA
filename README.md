@@ -31,3 +31,16 @@ R2バケットを以下のどちらかの名前でバインドしてください
 ## 非公開配信URL例
 - /assets/site01/anomaly1/example.png
 - /assets/site01/truth/example.png
+
+
+## Cloudflare Pages Functions fix
+This ZIP uses `functions/assets/[[path]].js` for Pages catch-all routing.
+In Cloudflare Pages, bind your R2 bucket with:
+
+- Binding name: `ASSETS_BUCKET`
+
+Example private asset URL:
+- `/assets/site01/anomaly1/img_product_shiromimi_eye_800x800.png`
+
+In R2, store the object key without `/assets/`, for example:
+- `site01/anomaly1/img_product_shiromimi_eye_800x800.png`

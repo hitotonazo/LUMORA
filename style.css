@@ -204,3 +204,55 @@ body[data-mode="truth"] .search-message{color:#ff8699}
 .noise-overlay{position:fixed;inset:0;z-index:9999;display:none;background:rgba(0,0,0,0.5)}
 .noise-overlay.is-active{display:block}
 .noise-message{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#7c0606;font-size:2rem;font-weight:bold}
+
+
+/* === product backside modal === */
+.product-back-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  display: none;
+}
+.product-back-modal.is-open {
+  display: block;
+}
+.product-back-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 18, 18, 0.62);
+  backdrop-filter: blur(1px);
+}
+.product-back-modal__dialog {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(92vw, 720px);
+  transform: translate(-50%, -50%);
+  background: #fffdfb;
+  border-radius: 24px;
+  padding: 18px 18px 14px;
+  box-shadow: 0 20px 70px rgba(0,0,0,0.22);
+}
+.product-back-modal__close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(80,80,80,0.12);
+  color: #3a2a2a;
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+.product-back-modal__image {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 18px;
+}
+body.stage-anomaly2 .section-title,
+body.stage-anomaly2 h2 {
+  letter-spacing: 0.08em;
+}

@@ -340,3 +340,93 @@ function runSiteAlteredOverlay(next){
   if(next)next();
  };
 }
+
+
+/* === stage 1 -> stage 2 flow === */
+(function () {
+  const backButton = document.getElementById("viewBackButton");
+  const backModal = document.getElementById("productBackModal");
+  const backClose = document.getElementById("productBackClose");
+  const backImage = document.getElementById("productBackImage");
+
+  function getModeFromQuery() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("mode") || "normal";
+  }
+
+  function setBodyStage(mode) {
+    document.body.classList.remove("stage-normal", "stage-anomaly1", "stage-anomaly2", "stage-anomaly3", "stage-truth");
+    document.body.classList.add(`stage-${mode}`);
+  }
+
+  function resolveBackImageForCurrentMode() {
+    const cfg = window.SITE_CONFIG || {};
+    const base = (cfg.r2PublicBase || "").replace(/\/$/, "");
+    const localFallback = "images/anomaly1/img_product_shiromimi_eye_800x800.png";
+    if (!base) return localFallback;
+
+    const mode = getModeFromQuery();
+    // 裏面は違和感①の画像を見せる
+    if (mode === "normal" || mode === "anomaly1") {
+      return `${base}/anomaly1/img_product_shiromimi_eye_800x800.png`;
+    }
+    if (mode === "anomaly2") {
+      return `${base}/anomaly2/img_product_morikuma_wrongface_800x800.png`;
+    }
+    if (mode === "anomaly3") {
+      return `${base}/anomaly3/img_product_yoruneko_red_800x800.png`;
+    }
+    return `${base}/truth/img_product_shiromimi_truth_800x800.png`;
+  }
+
+  function openBackModal() {
+    if (!backModal || !backImage) return;
+    backImage.src = resolveBackImageForCurrentMode();
+    backModal.classList.add("is-open");
+    backModal.setAttribute("aria-hidden", "false");
+  }
+
+  function closeBackModal() {
+    if (!backModal) return;
+    backModal.classList.remove("is-open");
+    backModal.setAttribute("aria-hidden", "true");
+  }
+
+  function goToMode(mode) {
+    const url = new URL(window.location.href);
+    url.searchParams.set("mode", mode);
+    window.location.href = url.toString();
+  }
+
+  if (backButton) {
+    backButton.addEventListener("click", openBackModal);
+  }
+
+  if (backClose) {
+    backClose.addEventListener("click", closeBackModal);
+  }
+
+  if (backModal) {
+    backModal.addEventListener("click", (event) => {
+      if (event.target === backModal || event.target.classList.contains("product-back-modal__backdrop")) {
+        closeBackModal();
+      }
+    });
+  }
+
+  if (backImage) {
+    backImage.addEventListener("click", () => {
+      closeBackModal();
+      if (typeof runSiteAlteredOverlay === "function") {
+        runSiteAlteredOverlay(() => {
+          goToMode("anomaly2");
+        });
+      } else {
+        goToMode("anomaly2");
+      }
+    });
+  }
+
+  // 初期モード反映
+  setBodyStage(getModeFromQuery());
+})();

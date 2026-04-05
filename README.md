@@ -76,3 +76,7 @@ R2 の推奨配置:
 - 裏面用ダミー画像を配置済み
 - パス: images/anomaly1/img_product_shiromimi_eye_800x800.png
 - R2未設定時はこのローカル画像をフォールバック表示します
+
+
+## 修正
+- 裏面画像は R2 ではなくローカル画像 `images/anomaly1/img_product_shiromimi_eye_800x800.png` を優先表示するよう修正

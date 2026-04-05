@@ -360,23 +360,8 @@ function runSiteAlteredOverlay(next){
   }
 
   function resolveBackImageForCurrentMode() {
-    const cfg = window.SITE_CONFIG || {};
-    const base = (cfg.r2PublicBase || "").replace(/\/$/, "");
-    const localFallback = "images/anomaly1/img_product_shiromimi_eye_800x800.png";
-    if (!base) return localFallback;
-
-    const mode = getModeFromQuery();
-    // 裏面は違和感①の画像を見せる
-    if (mode === "normal" || mode === "anomaly1") {
-      return `${base}/anomaly1/img_product_shiromimi_eye_800x800.png`;
-    }
-    if (mode === "anomaly2") {
-      return `${base}/anomaly2/img_product_morikuma_wrongface_800x800.png`;
-    }
-    if (mode === "anomaly3") {
-      return `${base}/anomaly3/img_product_yoruneko_red_800x800.png`;
-    }
-    return `${base}/truth/img_product_shiromimi_truth_800x800.png`;
+    // まずはサイト内のローカルダミー画像を優先して表示
+    return "images/anomaly1/img_product_shiromimi_eye_800x800.png";
   }
 
   function openBackModal() {

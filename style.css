@@ -256,3 +256,18 @@ body.stage-anomaly2 .section-title,
 body.stage-anomaly2 h2 {
   letter-spacing: 0.08em;
 }
+
+
+/* === overlay visibility force fix === */
+#noise-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: none;
+}
+#noise-overlay.is-active {
+  display: block !important;
+}
+#noise-overlay.is-active .noise-message {
+  opacity: 1 !important;
+}

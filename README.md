@@ -76,3 +76,37 @@ R2 の推奨配置:
 - 裏面用ダミー画像を配置済み
 - パス: images/anomaly1/img_product_shiromimi_eye_800x800.png
 - R2未設定時はこのローカル画像をフォールバック表示します
+
+
+## 修正
+- 裏面画像は R2 ではなくローカル画像 `images/anomaly1/img_product_shiromimi_eye_800x800.png` を優先表示するよう修正
+
+
+## 修正内容
+- 「裏面を見る」でメインの商品画像を裏面画像に切り替える仕様に修正
+- しろみみの裏面画像は `images/anomaly1/img_product_shiromimi_eye_800x800.png` を使用
+- 裏面表示中に商品画像をクリックすると、「サイトが改変されました。」演出後に `?mode=anomaly2` へ進む
+
+
+## 修正
+- 裏面画像クリック時の改変演出トリガーを追加修正
+- `#detail-image` を直接監視し、裏面画像表示中なら確実にオーバーレイを起動
+- オーバーレイ後に `?mode=anomaly2` へ遷移
+\n\n## 修正
+- 裏面画像クリック時の改変演出を、要素直結ではなく document 全体の委譲クリックで監視するよう変更
+- `runSiteAlteredOverlay` が未定義でも、このZIP内で強制的に使えるよう補完
+- オーバーレイCSSも上書きし、`is-active` 時に必ず前面表示されるよう修正\n
+
+## 修正
+- script.js 内に混入していた文字列 `\\n\\n` を除去し、SyntaxError を修正
+
+
+## 修正
+- 改変演出の対象を存在しない `#noise-overlay` から、実際にある `#transition-overlay` に修正
+- 裏面画像クリック時に `runSiteAlteredOverlay()` が必ず既存オーバーレイを出すよう修正
+
+
+## 修正
+- 「裏面を見る」ボタンの切替処理を末尾で上書き
+- ローカル裏面画像に確実に切替
+- 裏面表示中の画像クリックで既存 transition-overlay を表示

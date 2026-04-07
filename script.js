@@ -1222,3 +1222,88 @@ function runSiteAlteredOverlay(next) {
     setTimeout(syncDetailImageNow, 200);
   }
 })();
+
+
+
+/* === FINAL FIX V3: wrap renderDetail and keep detail image in sync === */
+(function () {
+  function normalizeToR2(path) {
+    const base = (window.SITE_CONFIG && window.SITE_CONFIG.r2PublicBase
+      ? window.SITE_CONFIG.r2PublicBase
+      : "https://pub-12f05472082049758097370dd8aaab52.r2.dev/images").replace(/\/$/, "");
+    if (!path) return path;
+    if (/^https?:\/\//.test(path)) return path;
+    if (path.startsWith("images/normal/")) return `${base}/normal/${path.replace("images/normal/", "")}`;
+    if (path.startsWith("images/anomaly1/")) return `${base}/anomaly1/${path.replace("images/anomaly1/", "")}`;
+    if (path.startsWith("images/anomaly2/")) return `${base}/anomaly2/${path.replace("images/anomaly2/", "")}`;
+    if (path.startsWith("images/anomaly3/")) return `${base}/anomaly3/${path.replace("images/anomaly3/", "")}`;
+    if (path.startsWith("images/truth/")) return `${base}/truth/${path.replace("images/truth/", "")}`;
+    if (path.startsWith("images/ui/")) return `${base}/shared/ui/${path.replace("images/ui/", "")}`;
+    return `${base}/${path.replace(/^images\//, "")}`;
+  }
+
+  function setImgR2First(img, logicalPath) {
+    if (!img || !logicalPath) return;
+    const localFallback = logicalPath;
+    img.onerror = function () {
+      this.onerror = null;
+      this.src = localFallback;
+    };
+    img.src = normalizeToR2(logicalPath);
+  }
+
+  function syncCurrentDetailImage() {
+    if (!(window.state && window.els && window.state.products && window.els.detailImage)) return;
+    const product = window.state.products.find(p => p.id === window.state.currentProductId) || window.state.products[0];
+    if (!product) return;
+
+    let imgSrc = product.image;
+    if (window.state.mode === "truth" && product.imageTruth) imgSrc = product.imageTruth;
+    if (window.state.mode === "anomaly1" && product.id === "shiromimi" && product.imageAnomaly1) imgSrc = product.imageAnomaly1;
+    if (window.state.showingBack) imgSrc = product.backImage || imgSrc;
+
+    setImgR2First(window.els.detailImage, imgSrc);
+    window.els.detailImage.alt = window.state.showingBack ? `${product.name}の裏面` : product.name;
+
+    if (window.els.toggleBackBtn) {
+      window.els.toggleBackBtn.textContent = window.state.showingBack ? "表面に戻す" : "裏面を見る";
+    }
+
+    if (product.id !== "shiromimi" && window.state.showingBack) {
+      window.state.showingBack = false;
+      setImgR2First(window.els.detailImage, product.image);
+      if (window.els.toggleBackBtn) window.els.toggleBackBtn.textContent = "裏面を見る";
+    }
+  }
+
+  function install() {
+    if (typeof window.renderDetail !== "function") return;
+
+    const originalRenderDetail = window.renderDetail;
+    window.renderDetail = function () {
+      const result = originalRenderDetail.apply(this, arguments);
+      syncCurrentDetailImage();
+      return result;
+    };
+
+    // initial sync after page boot
+    setTimeout(syncCurrentDetailImage, 50);
+    setTimeout(syncCurrentDetailImage, 200);
+
+    // card/detail button clicks
+    document.addEventListener("click", function (e) {
+      const btn = e.target.closest("[data-view]");
+      if (btn) {
+        setTimeout(syncCurrentDetailImage, 0);
+        setTimeout(syncCurrentDetailImage, 50);
+        setTimeout(syncCurrentDetailImage, 150);
+      }
+    }, true);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", install);
+  } else {
+    install();
+  }
+})();

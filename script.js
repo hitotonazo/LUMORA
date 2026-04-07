@@ -474,3 +474,86 @@ function runSiteAlteredOverlay(next){
     bindBacksideOverlayTrigger();
   }
 })();
+\n\n
+/* === force overlay + anomaly2 transition fix === */
+(function () {
+  function ensureOverlayFunctions() {
+    const overlay = document.getElementById("noise-overlay");
+    if (!overlay) return null;
+
+    if (typeof window.runSiteAlteredOverlay !== "function") {
+      let nextAction = null;
+
+      window.runSiteAlteredOverlay = function (callback) {
+        nextAction = typeof callback === "function" ? callback : null;
+        overlay.classList.add("is-active");
+        overlay.setAttribute("aria-hidden", "false");
+      };
+
+      function closeOverlayAndContinue() {
+        overlay.classList.remove("is-active");
+        overlay.setAttribute("aria-hidden", "true");
+        const action = nextAction;
+        nextAction = null;
+        if (typeof action === "function") action();
+      }
+
+      overlay.addEventListener("click", closeOverlayAndContinue);
+    }
+
+    return overlay;
+  }
+
+  function goToAnomaly2() {
+    const url = new URL(window.location.href);
+    url.searchParams.set("mode", "anomaly2");
+    window.location.href = url.toString();
+  }
+
+  function isBacksideVisible() {
+    const img =
+      document.getElementById("detail-image") ||
+      document.querySelector("#detailImage") ||
+      document.querySelector(".product-detail img") ||
+      document.querySelector("img");
+
+    if (!img) return false;
+    const src = img.getAttribute("src") || "";
+    return /img_product_shiromimi_eye_800x800\.png/.test(src);
+  }
+
+  function handlePotentialBacksideClick(event) {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+
+    const clickedImage =
+      target.closest("#detail-image") ||
+      target.closest("#detailImage") ||
+      target.closest(".product-detail img") ||
+      (target.tagName === "IMG" ? target : null);
+
+    if (!clickedImage) return;
+    if (!isBacksideVisible()) return;
+
+    const params = new URLSearchParams(window.location.search);
+    const mode = params.get("mode") || "normal";
+    if (!(mode === "normal" || mode === "anomaly1")) return;
+
+    const overlay = ensureOverlayFunctions();
+    if (overlay && typeof window.runSiteAlteredOverlay === "function") {
+      window.runSiteAlteredOverlay(goToAnomaly2);
+    } else {
+      goToAnomaly2();
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", function () {
+      ensureOverlayFunctions();
+      document.addEventListener("click", handlePotentialBacksideClick, true);
+    });
+  } else {
+    ensureOverlayFunctions();
+    document.addEventListener("click", handlePotentialBacksideClick, true);
+  }
+})();

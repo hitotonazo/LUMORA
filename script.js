@@ -474,7 +474,8 @@ function runSiteAlteredOverlay(next){
     bindBacksideOverlayTrigger();
   }
 })();
-\n\n
+
+
 /* === force overlay + anomaly2 transition fix === */
 (function () {
   function ensureOverlayFunctions() {

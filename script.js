@@ -979,3 +979,71 @@ function runSiteAlteredOverlay(next) {
     boot();
   }
 })();
+
+
+
+/* === FINAL FIX: product detail card click restore === */
+(function () {
+  function getProductIdFromElement(el) {
+    if (!el) return null;
+    return (
+      el.getAttribute("data-product-id") ||
+      el.dataset.productId ||
+      (el.closest("[data-product-id]") ? el.closest("[data-product-id]").getAttribute("data-product-id") : null)
+    );
+  }
+
+  function openDetailByProductId(productId) {
+    if (!productId) return;
+
+    try {
+      if (window.state) {
+        window.state.selectedId = productId;
+        window.state.showingBack = false;
+        document.body.classList.remove("is-showing-back");
+      }
+
+      if (typeof window.updateUrlMode === "function" && window.state && window.state.mode) {
+        window.updateUrlMode(window.state.mode);
+      }
+
+      if (typeof window.renderDetail === "function") {
+        window.renderDetail();
+      }
+
+      const detailSection = document.getElementById("detail");
+      if (detailSection) {
+        detailSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  document.addEventListener("click", function (e) {
+    const clickable =
+      e.target.closest("[data-product-id]") ||
+      e.target.closest(".product-card") ||
+      e.target.closest(".character-card") ||
+      e.target.closest(".popular-card") ||
+      e.target.closest(".item-card");
+
+    if (!clickable) return;
+
+    // 裏面切替や詳細画像クリックなど、詳細セクション内の専用操作は除外
+    if (e.target.closest("#toggle-back-btn") || e.target.closest("#detail-image") || e.target.closest("#detail-actions")) {
+      return;
+    }
+
+    // 既に詳細セクション内を触っている場合も除外
+    if (e.target.closest("#detail .detail-actions") || e.target.closest("#detail .detail-media")) {
+      return;
+    }
+
+    const productId = getProductIdFromElement(clickable);
+    if (!productId) return;
+
+    e.preventDefault();
+    openDetailByProductId(productId);
+  }, true);
+})();

@@ -697,3 +697,135 @@ function runSiteAlteredOverlay(next) {
     bind();
   }
 })();
+
+
+
+/* === FINAL OVERRIDE: all images R2-first === */
+(function () {
+  const R2_BASE = (window.SITE_CONFIG && window.SITE_CONFIG.r2PublicBase
+    ? window.SITE_CONFIG.r2PublicBase
+    : "https://pub-12f05472082049758097370dd8aaab52.r2.dev/images").replace(/\/$/, "");
+
+  function toR2(path) {
+    if (!path) return path;
+    if (/^https?:\/\//.test(path)) return path;
+    return `${R2_BASE}/${String(path).replace(/^\/+/, "")}`;
+  }
+
+  function setImgR2First(img, logicalPath) {
+    if (!img || !logicalPath) return;
+    const r2src = toR2(logicalPath);
+    img.onerror = function () {
+      this.onerror = null;
+      this.src = logicalPath;
+    };
+    img.src = r2src;
+  }
+
+  function replaceStaticImages() {
+    document.querySelectorAll("img").forEach((img) => {
+      const src = img.getAttribute("src") || "";
+      let logical = null;
+
+      if (img.id === "detail-image") return;
+      if (/^https?:\/\//.test(src)) return;
+
+      if (src.includes("img_logo_header")) logical = "shared/ui/img_logo_header_600x160.png";
+      else if (src.includes("img_product_shiromimi_front")) logical = "normal/img_product_shiromimi_front_800x800.png";
+      else if (src.includes("img_product_morikuma_front")) logical = "normal/img_product_morikuma_front_800x800.png";
+      else if (src.includes("img_product_kuroneko_front")) logical = "normal/img_product_kuroneko_front_800x800.png";
+      else if (src.includes("img_product_yoruneko_front")) logical = "normal/img_product_yoruneko_front_800x800.png";
+      else if (src.includes("img_product_hoshiumi_front")) logical = "normal/img_product_hoshiumi_front_800x800.png";
+      else if (src.includes("img_product_shiromimi_eye")) logical = "anomaly1/img_product_shiromimi_eye_800x800.png";
+      else if (src.includes("img_product_morikuma_wrongface")) logical = "anomaly2/img_product_morikuma_wrongface_800x800.png";
+      else if (src.includes("img_product_yoruneko_red")) logical = "anomaly3/img_product_yoruneko_red_800x800.png";
+
+      if (logical) setImgR2First(img, logical);
+    });
+  }
+
+  function bindDetailFlow() {
+    const img = document.getElementById("detail-image");
+    const btn = document.getElementById("toggle-back-btn");
+    const overlay = document.getElementById("transition-overlay");
+    if (!img || !btn) return;
+
+    if (!img.dataset.frontLogical) {
+      img.dataset.frontLogical = "normal/img_product_shiromimi_front_800x800.png";
+    }
+
+    const freshBtn = btn.cloneNode(true);
+    btn.parentNode.replaceChild(freshBtn, btn);
+
+    const freshImg = document.getElementById("detail-image");
+
+    setImgR2First(freshImg, img.dataset.frontLogical);
+
+    freshBtn.addEventListener("click", function (e) {
+      e.preventDefault();
+      const isBack = document.body.classList.contains("is-showing-back");
+      if (isBack) {
+        document.body.classList.remove("is-showing-back");
+        freshBtn.textContent = "裏面を見る";
+        if (window.state) window.state.showingBack = false;
+        setImgR2First(freshImg, freshImg.dataset.frontLogical || "normal/img_product_shiromimi_front_800x800.png");
+      } else {
+        document.body.classList.add("is-showing-back");
+        freshBtn.textContent = "表面に戻す";
+        if (window.state) window.state.showingBack = true;
+        setImgR2First(freshImg, "anomaly1/img_product_shiromimi_eye_800x800.png");
+      }
+    });
+
+    const newImg = freshImg.cloneNode(true);
+    freshImg.parentNode.replaceChild(newImg, freshImg);
+    if (!newImg.dataset.frontLogical) newImg.dataset.frontLogical = "normal/img_product_shiromimi_front_800x800.png";
+    if (document.body.classList.contains("is-showing-back")) {
+      setImgR2First(newImg, "anomaly1/img_product_shiromimi_eye_800x800.png");
+    } else {
+      setImgR2First(newImg, newImg.dataset.frontLogical);
+    }
+
+    newImg.addEventListener("click", function () {
+      if (!document.body.classList.contains("is-showing-back")) return;
+      const mode = (window.state && window.state.mode) || (new URLSearchParams(location.search).get("mode") || "normal");
+      if (!(mode === "normal" || mode === "anomaly1")) return;
+
+      const go = function () {
+        const url = new URL(location.href);
+        url.searchParams.set("mode", "anomaly2");
+        location.href = url.toString();
+      };
+
+      if (typeof runSiteAlteredOverlay === "function") {
+        runSiteAlteredOverlay(go);
+      } else if (overlay) {
+        overlay.classList.add("active");
+        overlay.setAttribute("aria-hidden", "false");
+        const close = function () {
+          overlay.classList.remove("active");
+          overlay.setAttribute("aria-hidden", "true");
+          overlay.removeEventListener("click", close);
+          go();
+        };
+        overlay.addEventListener("click", close);
+      } else {
+        go();
+      }
+    });
+  }
+
+  function bootR2First() {
+    replaceStaticImages();
+    bindDetailFlow();
+    setTimeout(replaceStaticImages, 100);
+    setTimeout(bindDetailFlow, 150);
+    setTimeout(replaceStaticImages, 400);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", bootR2First);
+  } else {
+    bootR2First();
+  }
+})();

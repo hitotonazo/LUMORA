@@ -127,6 +127,10 @@ function bindEvents() {
   });
 
   els.toggleBackBtn.addEventListener("click", () => {
+    if (state.mode === "anomaly2") {
+      triggerTransition("anomaly3");
+      return;
+    }
     state.showingBack = !state.showingBack;
     renderDetail();
   });
@@ -137,21 +141,6 @@ function bindEvents() {
     if (state.mode === "anomaly3") {
       triggerTransition("truth");
     }
-  });
-  els.detailImage.addEventListener("click", () => {
-    if (!state.showingBack) return;
-    if (state.mode !== "normal" && state.mode !== "anomaly1") return;
-
-    if (typeof runSiteAlteredOverlay === "function") {
-      runSiteAlteredOverlay(() => {
-        updateUrlMode("anomaly2");
-        setMode("anomaly2");
-      });
-      return;
-    }
-
-    updateUrlMode("anomaly2");
-    setMode("anomaly2");
   });
 
   els.searchForm.addEventListener("submit", e => {
@@ -283,10 +272,11 @@ function renderDetail() {
     : "表情・縫製・綿入れの順に仕上げ、最終調整後に出荷します。";
 
   let imgSrc = getProductImage(product);
-  if (state.showingBack) imgSrc = product.backImage || imgSrc;
+  if (state.showingBack && state.mode === "anomaly2") imgSrc = product.backImage;
+  else if (state.showingBack && state.mode !== "anomaly2") imgSrc = product.image;
   setImageSource(els.detailImage, imgSrc);
-  els.detailImage.alt = state.showingBack ? `${product.name}の裏面` : product.name;
-  els.toggleBackBtn.textContent = state.showingBack ? "表面に戻す" : "裏面を見る";
+  els.detailImage.alt = product.name;
+  els.toggleBackBtn.textContent = state.mode === "anomaly2" ? "裏面を見る" : (state.showingBack ? "表面に戻す" : "裏面を見る");
 }
 
 function renderNews() {
@@ -370,8 +360,23 @@ function runSiteAlteredOverlay(next){
   }
 
   function resolveBackImageForCurrentMode() {
-    // まずはサイト内のローカルダミー画像を優先して表示
-    return "images/anomaly1/img_product_shiromimi_eye_800x800.png";
+    const cfg = window.SITE_CONFIG || {};
+    const base = (cfg.r2PublicBase || "").replace(/\/$/, "");
+    const localFallback = "images/anomaly1/img_product_shiromimi_eye_800x800.png";
+    if (!base) return localFallback;
+
+    const mode = getModeFromQuery();
+    // 裏面は違和感①の画像を見せる
+    if (mode === "normal" || mode === "anomaly1") {
+      return `${base}/anomaly1/img_product_shiromimi_eye_800x800.png`;
+    }
+    if (mode === "anomaly2") {
+      return `${base}/anomaly2/img_product_morikuma_wrongface_800x800.png`;
+    }
+    if (mode === "anomaly3") {
+      return `${base}/anomaly3/img_product_yoruneko_red_800x800.png`;
+    }
+    return `${base}/truth/img_product_shiromimi_truth_800x800.png`;
   }
 
   function openBackModal() {
@@ -424,137 +429,4 @@ function runSiteAlteredOverlay(next){
 
   // 初期モード反映
   setBodyStage(getModeFromQuery());
-})();
-
-
-// この版では「裏面を見る」→メイン商品画像の差し替え で進行します。
-// 裏面表示中に商品画像をクリックすると、改変演出のあと違和感②へ進みます。
-
-
-
-/* === backside click overlay fix === */
-(function () {
-  function bindBacksideOverlayTrigger() {
-    const detailImage = document.getElementById("detail-image");
-    if (!detailImage) return;
-
-    detailImage.addEventListener("click", function () {
-      try {
-        const isBack =
-          (window.state && window.state.showingBack) ||
-          document.body.classList.contains("is-showing-back") ||
-          /img_product_shiromimi_eye_800x800\.png/.test(detailImage.getAttribute("src") || "");
-
-        const params = new URLSearchParams(window.location.search);
-        const mode = params.get("mode") || "normal";
-
-        if (!isBack) return;
-        if (!(mode === "normal" || mode === "anomaly1")) return;
-
-        if (typeof runSiteAlteredOverlay === "function") {
-          runSiteAlteredOverlay(function () {
-            const url = new URL(window.location.href);
-            url.searchParams.set("mode", "anomaly2");
-            window.location.href = url.toString();
-          });
-        } else {
-          const url = new URL(window.location.href);
-          url.searchParams.set("mode", "anomaly2");
-          window.location.href = url.toString();
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    });
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", bindBacksideOverlayTrigger);
-  } else {
-    bindBacksideOverlayTrigger();
-  }
-})();
-
-
-/* === force overlay + anomaly2 transition fix === */
-(function () {
-  function ensureOverlayFunctions() {
-    const overlay = document.getElementById("noise-overlay");
-    if (!overlay) return null;
-
-    if (typeof window.runSiteAlteredOverlay !== "function") {
-      let nextAction = null;
-
-      window.runSiteAlteredOverlay = function (callback) {
-        nextAction = typeof callback === "function" ? callback : null;
-        overlay.classList.add("is-active");
-        overlay.setAttribute("aria-hidden", "false");
-      };
-
-      function closeOverlayAndContinue() {
-        overlay.classList.remove("is-active");
-        overlay.setAttribute("aria-hidden", "true");
-        const action = nextAction;
-        nextAction = null;
-        if (typeof action === "function") action();
-      }
-
-      overlay.addEventListener("click", closeOverlayAndContinue);
-    }
-
-    return overlay;
-  }
-
-  function goToAnomaly2() {
-    const url = new URL(window.location.href);
-    url.searchParams.set("mode", "anomaly2");
-    window.location.href = url.toString();
-  }
-
-  function isBacksideVisible() {
-    const img =
-      document.getElementById("detail-image") ||
-      document.querySelector("#detailImage") ||
-      document.querySelector(".product-detail img") ||
-      document.querySelector("img");
-
-    if (!img) return false;
-    const src = img.getAttribute("src") || "";
-    return /img_product_shiromimi_eye_800x800\.png/.test(src);
-  }
-
-  function handlePotentialBacksideClick(event) {
-    const target = event.target;
-    if (!(target instanceof Element)) return;
-
-    const clickedImage =
-      target.closest("#detail-image") ||
-      target.closest("#detailImage") ||
-      target.closest(".product-detail img") ||
-      (target.tagName === "IMG" ? target : null);
-
-    if (!clickedImage) return;
-    if (!isBacksideVisible()) return;
-
-    const params = new URLSearchParams(window.location.search);
-    const mode = params.get("mode") || "normal";
-    if (!(mode === "normal" || mode === "anomaly1")) return;
-
-    const overlay = ensureOverlayFunctions();
-    if (overlay && typeof window.runSiteAlteredOverlay === "function") {
-      window.runSiteAlteredOverlay(goToAnomaly2);
-    } else {
-      goToAnomaly2();
-    }
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", function () {
-      ensureOverlayFunctions();
-      document.addEventListener("click", handlePotentialBacksideClick, true);
-    });
-  } else {
-    ensureOverlayFunctions();
-    document.addEventListener("click", handlePotentialBacksideClick, true);
-  }
 })();

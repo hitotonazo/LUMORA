@@ -118,3 +118,9 @@ R2 の推奨配置:
   https://pub-12f05472082049758097370dd8aaab52.r2.dev/images
 - 裏面画像も R2 の anomaly1 配下を優先
 - R2にない場合のみローカル画像へフォールバック
+
+
+## 追加修正
+- 詳細画像の裏面切替を document 委譲で上書き
+- 全画像R2優先を維持したまま、`#toggle-back-btn` で確実に front/back 切替
+- 裏面表示中の `#detail-image` クリックで改変演出 → anomaly2

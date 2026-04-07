@@ -829,3 +829,153 @@ function runSiteAlteredOverlay(next) {
     bootR2First();
   }
 })();
+
+
+
+/* === FINAL DETAIL FIX: R2-first backside toggle === */
+(function () {
+  const R2_BASE = (window.SITE_CONFIG && window.SITE_CONFIG.r2PublicBase
+    ? window.SITE_CONFIG.r2PublicBase
+    : "https://pub-12f05472082049758097370dd8aaab52.r2.dev/images").replace(/\/$/, "");
+
+  function r2(path) {
+    return `${R2_BASE}/${String(path).replace(/^\/+/, "")}`;
+  }
+
+  function setR2First(img, logicalPath) {
+    if (!img || !logicalPath) return;
+    img.onerror = function () {
+      this.onerror = null;
+      this.src = `images/${logicalPath}`;
+    };
+    img.src = r2(logicalPath);
+  }
+
+  function getDetailImage() {
+    return document.getElementById("detail-image");
+  }
+
+  function getToggleButton() {
+    return document.getElementById("toggle-back-btn");
+  }
+
+  function initDetailImage() {
+    const img = getDetailImage();
+    const btn = getToggleButton();
+    if (!img) return;
+
+    if (!img.dataset.frontLogical) {
+      img.dataset.frontLogical =
+        img.dataset.frontLogical ||
+        img.dataset.frontSrc ||
+        img.dataset.frontLogical ||
+        "normal/img_product_shiromimi_front_800x800.png";
+    }
+
+    if (!img.dataset.side) {
+      const current = img.getAttribute("src") || "";
+      img.dataset.side = /img_product_shiromimi_eye_800x800\.png/.test(current) ? "back" : "front";
+    }
+
+    if (img.dataset.side === "back") {
+      setR2First(img, "anomaly1/img_product_shiromimi_eye_800x800.png");
+      document.body.classList.add("is-showing-back");
+      if (btn) btn.textContent = "表面に戻す";
+    } else {
+      setR2First(img, img.dataset.frontLogical);
+      document.body.classList.remove("is-showing-back");
+      if (btn) btn.textContent = "裏面を見る";
+    }
+  }
+
+  function toggleDetailImage() {
+    const img = getDetailImage();
+    const btn = getToggleButton();
+    if (!img) return;
+
+    if (!img.dataset.frontLogical) {
+      img.dataset.frontLogical = "normal/img_product_shiromimi_front_800x800.png";
+    }
+
+    const nextSide = img.dataset.side === "back" ? "front" : "back";
+    img.dataset.side = nextSide;
+
+    if (nextSide === "back") {
+      setR2First(img, "anomaly1/img_product_shiromimi_eye_800x800.png");
+      document.body.classList.add("is-showing-back");
+      if (window.state) window.state.showingBack = true;
+      if (btn) btn.textContent = "表面に戻す";
+    } else {
+      setR2First(img, img.dataset.frontLogical);
+      document.body.classList.remove("is-showing-back");
+      if (window.state) window.state.showingBack = false;
+      if (btn) btn.textContent = "裏面を見る";
+    }
+  }
+
+  function goToAnomaly2() {
+    const url = new URL(location.href);
+    url.searchParams.set("mode", "anomaly2");
+    location.href = url.toString();
+  }
+
+  function showTransition(next) {
+    const overlay = document.getElementById("transition-overlay");
+    if (!overlay) {
+      if (typeof next === "function") next();
+      return;
+    }
+
+    overlay.classList.add("active");
+    overlay.setAttribute("aria-hidden", "false");
+
+    const close = function () {
+      overlay.classList.remove("active");
+      overlay.setAttribute("aria-hidden", "true");
+      overlay.removeEventListener("click", close);
+      if (typeof next === "function") next();
+    };
+
+    overlay.addEventListener("click", close);
+  }
+
+  document.addEventListener("click", function (e) {
+    const toggle = e.target && e.target.closest ? e.target.closest("#toggle-back-btn") : null;
+    if (toggle) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      toggleDetailImage();
+      return;
+    }
+
+    const img = e.target && e.target.closest ? e.target.closest("#detail-image") : null;
+    if (img) {
+      const mode = (window.state && window.state.mode) || (new URLSearchParams(location.search).get("mode") || "normal");
+      if (img.dataset.side !== "back") return;
+      if (!(mode === "normal" || mode === "anomaly1")) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+
+      if (typeof runSiteAlteredOverlay === "function") {
+        runSiteAlteredOverlay(goToAnomaly2);
+      } else {
+        showTransition(goToAnomaly2);
+      }
+    }
+  }, true);
+
+  function boot() {
+    initDetailImage();
+    setTimeout(initDetailImage, 100);
+    setTimeout(initDetailImage, 400);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot);
+  } else {
+    boot();
+  }
+})();

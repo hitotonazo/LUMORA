@@ -1047,3 +1047,85 @@ function runSiteAlteredOverlay(next) {
     openDetailByProductId(productId);
   }, true);
 })();
+
+
+
+/* === FINAL FIX: detail image sync on card switch === */
+(function () {
+  const R2_BASE = (window.SITE_CONFIG && window.SITE_CONFIG.r2PublicBase
+    ? window.SITE_CONFIG.r2PublicBase
+    : "https://pub-12f05472082049758097370dd8aaab52.r2.dev/images").replace(/\/$/, "");
+
+  function r2(path) {
+    return `${R2_BASE}/${String(path).replace(/^\/+/, "")}`;
+  }
+
+  function setR2First(img, logicalPath) {
+    if (!img || !logicalPath) return;
+    img.onerror = function () {
+      this.onerror = null;
+      this.src = `images/${logicalPath}`;
+    };
+    img.src = r2(logicalPath);
+  }
+
+  function logicalFrontFromProductId(productId) {
+    if (productId === "shiromimi") return "normal/img_product_shiromimi_front_800x800.png";
+    if (productId === "morikuma") return "normal/img_product_morikuma_front_800x800.png";
+    if (productId === "kuroneko") return "normal/img_product_kuroneko_front_800x800.png";
+    if (productId === "yoruneko") return "normal/img_product_yoruneko_front_800x800.png";
+    if (productId === "hoshiumi") return "normal/img_product_hoshiumi_front_800x800.png";
+    return "normal/img_product_shiromimi_front_800x800.png";
+  }
+
+  function syncDetailImageWithSelectedId() {
+    const img = document.getElementById("detail-image");
+    if (!img || !window.state || !window.state.selectedId) return;
+
+    const frontLogical = logicalFrontFromProductId(window.state.selectedId);
+    img.dataset.frontLogical = frontLogical;
+
+    if (window.state.showingBack && window.state.selectedId === "shiromimi") {
+      img.dataset.side = "back";
+      document.body.classList.add("is-showing-back");
+      setR2First(img, "anomaly1/img_product_shiromimi_eye_800x800.png");
+      const btn = document.getElementById("toggle-back-btn");
+      if (btn) btn.textContent = "表面に戻す";
+    } else {
+      img.dataset.side = "front";
+      document.body.classList.remove("is-showing-back");
+      window.state.showingBack = false
+      setR2First(img, frontLogical);
+      const btn = document.getElementById("toggle-back-btn");
+      if (btn) btn.textContent = window.state.selectedId === "shiromimi" ? "裏面を見る" : "裏面を見る";
+    }
+  }
+
+  // クリックで selectedId が変わった直後に画像も同期
+  document.addEventListener("click", function (e) {
+    const card =
+      e.target.closest("[data-product-id]") ||
+      e.target.closest(".product-card") ||
+      e.target.closest(".character-card") ||
+      e.target.closest(".popular-card") ||
+      e.target.closest(".item-card");
+
+    if (!card) return;
+    if (e.target.closest("#toggle-back-btn") || e.target.closest("#detail-image")) return;
+
+    setTimeout(syncDetailImageWithSelectedId, 0);
+    setTimeout(syncDetailImageWithSelectedId, 80);
+    setTimeout(syncDetailImageWithSelectedId, 250);
+  }, true);
+
+  // 初期表示や mode 切替後にも同期
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", function () {
+      setTimeout(syncDetailImageWithSelectedId, 50);
+      setTimeout(syncDetailImageWithSelectedId, 200);
+    });
+  } else {
+    setTimeout(syncDetailImageWithSelectedId, 50);
+    setTimeout(syncDetailImageWithSelectedId, 200);
+  }
+})();

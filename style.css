@@ -509,3 +509,18 @@ body[data-mode="anomaly3"] #detail-birthplace.revealed-place{
   visibility: visible !important;
   pointer-events: auto !important;
 }
+
+
+/* overlay default-hidden hard fix */
+#noise-overlay,
+.noise-overlay {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+#noise-overlay.is-active,
+.noise-overlay.is-active {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}

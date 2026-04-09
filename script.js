@@ -296,6 +296,21 @@ function bindEvents() {
         setMode(nextMode);
       }
     });
+  }
+
+  els.toggleBackBtn.addEventListener("click", e => {
+    e.preventDefault();
+    state.showingBack = !state.showingBack;
+    renderDetail();
+  });
+
+  els.detailImage.addEventListener("click", () => {
+    const product = currentProduct();
+    if (!product || !state.showingBack) return;
+
+    if (product.id === "shiromimi" && (state.mode === "normal" || state.mode === "anomaly1")) {
+      runSiteAlteredOverlay("anomaly2");
+    }
   });
 
   els.detailCraft.addEventListener("click", () => {
@@ -343,31 +358,6 @@ function bindEvents() {
 
   window.addEventListener("popstate", () => setMode(getModeFromUrl()));
 }
-
-window.checkRequestedState = function () {
-  const product = currentProduct();
-  return {
-    mode: state.mode,
-    currentProductId: state.currentProductId,
-    showingBack: state.showingBack,
-    anomaly3Clicks: state.anomaly3Clicks,
-    backImage: product ? getBackImage(product) : null,
-    craftText: els.detailCraft ? els.detailCraft.textContent : null,
-    birthplace: els.detailBirthplace ? els.detailBirthplace.textContent : null,
-    detailImageSrc: els.detailImage ? els.detailImage.src : null
-  };
-};
-
-
-window.checkNoiseOverlayState = function () {
-  return {
-    hasOverlay: !!els.noiseOverlay,
-    className: els.noiseOverlay ? els.noiseOverlay.className : null,
-    ariaHidden: els.noiseOverlay ? els.noiseOverlay.getAttribute("aria-hidden") : null,
-    isActive: els.noiseOverlay ? els.noiseOverlay.classList.contains("is-active") : null
-  };
-};
-
 
 window.checkOverlayTransitionState = function () {
   return {

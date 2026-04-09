@@ -206,3 +206,9 @@ checkLumoraState()
 - 違和感箇所の1回目クリックで『サイトが改変されました。』表示
 - オーバーレイ上の2回目クリックで次の違和感へ遷移する2段階方式に変更
 - 確認用: checkOverlayTransitionState()
+
+
+## 修正
+- script.js の overlay/bindEvents 周辺を再構成して SyntaxError を修正
+- サイト改変演出を初期状態では非表示に固定
+- 違和感箇所1回目クリックで演出表示、2回目クリックで次段階へ進む方式を維持

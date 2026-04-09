@@ -44,7 +44,13 @@ window.els = els;
 window.renderDetail = renderDetail;
 window.__LUMORA_DEBUG__ = true;
 
+
 document.addEventListener("DOMContentLoaded", init);
+
+function getModeFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("mode") || "normal";
+}
 
 async function init() {
   const [products, reviews, news] = await Promise.all([

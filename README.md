@@ -196,3 +196,7 @@ checkLumoraBackImage()
 
 ## Syntax repair
 - script.js の bindEvents 周辺を再構成して Unexpected token '}' を修正
+
+
+## Runtime repair
+- `getModeFromUrl()` を追加し、初期化時の ReferenceError を修正

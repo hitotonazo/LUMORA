@@ -9,9 +9,7 @@
 </head>
 <body data-mode="normal">
   <div id="screen-noise" aria-hidden="true"></div>
-  <div id="transition-overlay" class="overlay" aria-hidden="true">
-    <div class="overlay__noise"></div>
-    <div class="overlay__content">
+<div class="overlay__content">
       <p class="overlay__text">サイトが改変されました。</p>
       <p class="overlay__sub">画面をクリックすると次へ進みます。</p>
     </div>
@@ -72,14 +70,14 @@
       <div class="container">
         <div class="section-head">
           <h2>商品詳細</h2>
-          <p>画像、設定、制作工程をひとつずつ確認できます。</p>
+          <p>画像や設定をひとつずつ確認できます。</p>
         </div>
         <div class="detail-card">
           <div class="detail-media">
             <img id="detail-image" src="images/normal/img_product_shiromimi_front_800x800.png" alt="商品詳細">
             <div class="detail-actions">
               <button id="toggle-back-btn" class="ghost-btn" id="viewBackButton">裏面を見る</button>
-              <button id="open-craft-btn" class="ghost-btn" id="viewProcessButton">制作工程を見る</button>
+              
             </div>
           </div>
           <div class="detail-copy">
@@ -200,15 +198,6 @@
   <div class="noise-layer noise-layer-3"></div>
   <div class="noise-flash"></div>
   <div id="noise-message" class="noise-message">サイトが改変されました。</div>
-</div>
-
-
-<div id="productBackModal" class="product-back-modal" aria-hidden="true">
-  <div class="product-back-modal__backdrop"></div>
-  <div class="product-back-modal__dialog" role="dialog" aria-modal="true" aria-label="裏面画像">
-    <button id="productBackClose" class="product-back-modal__close" type="button" aria-label="閉じる">×</button>
-    <img id="productBackImage" class="product-back-modal__image" src="" alt="しろみみの裏面画像">
-  </div>
 </div>
 
 </body>

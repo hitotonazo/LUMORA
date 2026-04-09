@@ -177,28 +177,20 @@ checkLumoraState()
 - 背面表示中に画像クリックで改変演出 → anomaly2
 
 
-## 今回の修正内容
-このZIPは、添付ZIPをベースに「各カードごとの背面画像をR2から読む」ことだけに絞って直接修正しています。
 
-### 背面画像パス
-- shiromimi: `images/anomaly1/img_product_shiromimi_eye_800x800.png`
-- morikuma: `images/anomaly1/img_product_morikuma_back_800x800.png`
-- koroneko: `images/anomaly1/img_product_koroneko_back_800x800.png`
-- yoruneko: `images/anomaly1/img_product_yoruneko_back_800x800.png`
-- hoshiumi: `images/anomaly1/img_product_hoshiumi_back_800x800.png`
+## 反映内容
+- 制作工程を見るボタンを削除
+- 改変演出を添付仕様の砂嵐オーバーレイに変更 fileciteturn2file0
+- 違和感①:
+  - しろみみの裏面表示中クリックで改変演出 → 違和感②
+- 違和感②:
+  - しろみみの裏面は通常背面画像に戻る
+  - 制作方法欄を血文字風の異常文言に変更
+  - その文言をクリックで改変演出 → 違和感③
+- 違和感③:
+  - 出身地欄の端をドッグイヤー化
+  - 5回クリックで遺体発見場所の表記へ変化
+  - さらにクリックで改変演出 → 真相
+- 確認用:
+  - `checkRequestedState()`
 
-### 仕様
-- どの商品でも「裏面を見る」で `product.backImage` を表示
-- R2は既存の `resolveAssetPath()` / `r2PublicBase` 経由で参照
-- 改変演出への進行は `shiromimi` のみ
-
-### 確認用
-```js
-checkBackImageConfig()
-state.currentProductId
-document.getElementById("detail-image").src
-```
-
-
-## Syntax fix
-- script.js の detailImage クリック処理に混入していた重複コードを削除

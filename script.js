@@ -142,6 +142,7 @@ function bindEvents() {
       triggerTransition("truth");
     }
   });
+
   els.detailImage.addEventListener("click", () => {
     if (!state.showingBack) return;
     if (state.mode !== "normal" && state.mode !== "anomaly1") return;
@@ -151,12 +152,6 @@ function bindEvents() {
         updateUrlMode("anomaly2");
         setMode("anomaly2");
       });
-      return;
-    }
-
-    updateUrlMode("anomaly2");
-    setMode("anomaly2");
-  });
       return;
     }
 
@@ -177,7 +172,7 @@ function bindEvents() {
       state.showingBack = false;
       renderProducts();
       renderDetail();
-      document.getElementById("detail").scrollIntoView({behavior:"smooth", block:"start"});
+      document.getElementById("detail").scrollIntoView({ behavior: "smooth", block: "start" });
       els.searchMessage.textContent = `「${product.name}」を表示しました。`;
     } else {
       els.searchMessage.textContent = `「${els.searchInput.value}」に一致する商品は見つかりませんでした。`;
@@ -185,21 +180,13 @@ function bindEvents() {
   });
 
   els.shareBtn.addEventListener("click", () => {
-    const config = window.SHARE_CONFIG || {};
-    const text = `${config.shareText || ""}\n${config.originTweetUrl || location.href}`.trim();
-    const url = `https://x.com/intent/tweet?text=${encodeURIComponent(text)}`;
-    window.open(url, "_blank", "noopener,noreferrer");
+    const url = (state.config && state.config.shareUrl) || location.href;
+    const text = state.mode === "truth"
+      ? "このページは記録保管ページでした。"
+      : "こもれびぬいのページを見つけました。";
+    window.open(`https://x.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, "_blank", "noopener,noreferrer");
   });
-
-  window.addEventListener("popstate", () => setMode(getModeFromUrl()));
 }
-
-function getModeFromUrl() {
-  const params = new URLSearchParams(location.search);
-  const mode = params.get("mode") || "normal";
-  return MODES.includes(mode) ? mode : "normal";
-}
-
 function updateUrlMode(mode) {
   const url = new URL(location.href);
   url.searchParams.set("mode", mode);

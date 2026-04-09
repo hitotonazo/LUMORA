@@ -192,3 +192,7 @@ checkLumoraState()
 ```js
 checkLumoraBackImage()
 ```
+
+
+## Syntax repair
+- script.js の bindEvents 周辺を再構成して Unexpected token '}' を修正

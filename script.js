@@ -41,6 +41,7 @@ const els = {
 };
 window.state = state;
 window.els = els;
+window.renderDetail = renderDetail;
 window.__LUMORA_DEBUG__ = true;
 
 document.addEventListener("DOMContentLoaded", init);
@@ -1343,3 +1344,69 @@ window.checkLumoraState = function () {
     detailImageProductId: img ? img.dataset.productId : null
   };
 };
+
+
+
+/* === FINAL BACK IMAGE FIX: use each product's own backImage === */
+(function () {
+  function syncPerProductBackImage() {
+    if (!(window.state && window.els && window.els.detailImage && Array.isArray(window.state.products))) return;
+    const product = window.state.products.find(p => p.id === window.state.currentProductId) || window.state.products[0];
+    if (!product) return;
+
+    let imgSrc = product.image || "";
+    if (window.state.mode === "truth" && product.imageTruth) imgSrc = product.imageTruth;
+    if (window.state.mode === "anomaly1" && product.id === "shiromimi" && product.imageAnomaly1 && !window.state.showingBack) {
+      imgSrc = product.imageAnomaly1;
+    }
+    if (window.state.showingBack && product.backImage) {
+      imgSrc = product.backImage;
+    }
+
+    if (typeof setImageSource === "function") {
+      setImageSource(window.els.detailImage, imgSrc);
+    } else {
+      window.els.detailImage.src = imgSrc;
+    }
+
+    window.els.detailImage.dataset.productId = product.id;
+    window.els.detailImage.dataset.frontSrc = product.image || "";
+    window.els.detailImage.dataset.backSrc = product.backImage || "";
+    window.els.detailImage.alt = window.state.showingBack ? `${product.name}の裏面` : (product.name || "商品詳細");
+
+    if (window.els.toggleBackBtn) {
+      window.els.toggleBackBtn.textContent = window.state.showingBack ? "表面に戻す" : "裏面を見る";
+    }
+  }
+
+  // wrap renderDetail once
+  if (typeof window.renderDetail === "function" && !window.__backImageWrapped) {
+    const originalRenderDetail = window.renderDetail;
+    window.renderDetail = function () {
+      const result = originalRenderDetail.apply(this, arguments);
+      syncPerProductBackImage();
+      return result;
+    };
+    window.__backImageWrapped = true;
+  }
+
+  document.addEventListener("click", function (e) {
+    const toggleBtn = e.target.closest("#toggle-back-btn");
+    const detailBtn = e.target.closest("[data-view]");
+    if (toggleBtn || detailBtn) {
+      setTimeout(syncPerProductBackImage, 0);
+      setTimeout(syncPerProductBackImage, 80);
+      setTimeout(syncPerProductBackImage, 200);
+    }
+  }, true);
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", function () {
+      setTimeout(syncPerProductBackImage, 50);
+      setTimeout(syncPerProductBackImage, 200);
+    });
+  } else {
+    setTimeout(syncPerProductBackImage, 50);
+    setTimeout(syncPerProductBackImage, 200);
+  }
+})();

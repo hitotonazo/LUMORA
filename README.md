@@ -175,3 +175,8 @@ checkLumoraState()
   - `images/anomaly1/img_product_hoshiumi_back_800x800.png`
 - どの商品でも「裏面を見る」で背面ダミー画像を表示
 - 背面表示中に画像クリックで改変演出 → anomaly2
+
+
+## 背面画像修正
+- 各商品の `backImage` を個別パスに修正
+- 詳細描画後にも現在商品の `backImage` を再適用する処理を追加

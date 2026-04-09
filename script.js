@@ -110,7 +110,6 @@ function setImageSource(img, originalPath) {
   bindImageFallback(img, originalPath);
   img.src = resolved;
 }
-
 function applyStaticAssetPaths() {
   document.querySelectorAll('img[src^="images/"]').forEach(img => {
     const original = img.getAttribute("src");
@@ -132,8 +131,6 @@ function bindEvents() {
 
   els.toggleBackBtn.addEventListener("click", e => {
     e.preventDefault();
-    const product = state.products.find(p => p.id === state.currentProductId) || state.products[0];
-    if (!product) return;
     state.showingBack = !state.showingBack;
     renderDetail();
   });
@@ -146,8 +143,6 @@ function bindEvents() {
     }
   });
   els.detailImage.addEventListener("click", () => {
-    const product = state.products.find(p => p.id === state.currentProductId) || state.products[0];
-    if (!product) return;
     if (!state.showingBack) return;
     if (state.mode !== "normal" && state.mode !== "anomaly1") return;
 
@@ -156,6 +151,12 @@ function bindEvents() {
         updateUrlMode("anomaly2");
         setMode("anomaly2");
       });
+      return;
+    }
+
+    updateUrlMode("anomaly2");
+    setMode("anomaly2");
+  });
       return;
     }
 
@@ -287,20 +288,19 @@ function renderDetail() {
   els.detailSeries.textContent = product.series || "";
   els.detailName.textContent = product.name || "";
   els.detailPrice.textContent = product.price || "";
-  els.detailDescription.textContent = state.mode === "truth" ? (product.craftTruth || product.description || "") : (product.description || "");
+  els.detailDescription.textContent = state.mode === "truth"
+    ? (product.craftTruth || product.description || "")
+    : (product.description || "");
   els.detailBirthplace.textContent = product.birthplace || "";
-  els.detailCraft.textContent = (state.mode === "anomaly3" || state.mode === "truth") ? (product.craftTruth || product.craftNormal || "") : (product.craftNormal || "");
+  els.detailCraft.textContent = (state.mode === "anomaly3" || state.mode === "truth")
+    ? (product.craftTruth || product.craftNormal || "")
+    : (product.craftNormal || "");
   els.craftText.textContent = state.mode === "truth"
     ? "手順の一つひとつが、通常の制作工程ではなく“処理の記録”として読めるように変化しています。"
     : "表情・縫製・綿入れの順に仕上げ、最終調整後に出荷します。";
 
-  if (product.id !== "shiromimi" && state.showingBack) {
-    state.showingBack = false;
-    document.body.classList.remove("is-showing-back");
-  }
-
   let imgSrc = getProductImage(product);
-  if (state.showingBack && product.id === "shiromimi") {
+  if (state.showingBack) {
     imgSrc = product.backImage || imgSrc;
     document.body.classList.add("is-showing-back");
   } else {
@@ -309,9 +309,10 @@ function renderDetail() {
 
   setImageSource(els.detailImage, imgSrc);
   els.detailImage.dataset.productId = product.id;
-  els.detailImage.dataset.frontSrc = product.image || imgSrc;
-  els.detailImage.alt = state.showingBack && product.id === "shiromimi" ? `${product.name}の裏面` : (product.name || "商品詳細");
-  els.toggleBackBtn.textContent = state.showingBack && product.id === "shiromimi" ? "表面に戻す" : "裏面を見る";
+  els.detailImage.dataset.frontSrc = product.image || "";
+  els.detailImage.dataset.backSrc = product.backImage || "";
+  els.detailImage.alt = state.showingBack ? `${product.name}の裏面` : (product.name || "商品詳細");
+  els.toggleBackBtn.textContent = state.showingBack ? "表面に戻す" : "裏面を見る";
 }
 function renderNews() {
   const items = state.mode === "truth" ? state.news.truth : state.news.normal;
@@ -724,288 +725,6 @@ function runSiteAlteredOverlay(next) {
 
 
 
-/* === FINAL OVERRIDE: all images R2-first === */
-(function () {
-  const R2_BASE = (window.SITE_CONFIG && window.SITE_CONFIG.r2PublicBase
-    ? window.SITE_CONFIG.r2PublicBase
-    : "https://pub-12f05472082049758097370dd8aaab52.r2.dev/images").replace(/\/$/, "");
-
-  function toR2(path) {
-    if (!path) return path;
-    if (/^https?:\/\//.test(path)) return path;
-    return `${R2_BASE}/${String(path).replace(/^\/+/, "")}`;
-  }
-
-  function setImgR2First(img, logicalPath) {
-    if (!img || !logicalPath) return;
-    const r2src = toR2(logicalPath);
-    img.onerror = function () {
-      this.onerror = null;
-      this.src = logicalPath;
-    };
-    img.src = r2src;
-  }
-
-  function replaceStaticImages() {
-    document.querySelectorAll("img").forEach((img) => {
-      const src = img.getAttribute("src") || "";
-      let logical = null;
-
-      if (img.id === "detail-image") return;
-      if (/^https?:\/\//.test(src)) return;
-
-      if (src.includes("img_logo_header")) logical = "shared/ui/img_logo_header_600x160.png";
-      else if (src.includes("img_product_shiromimi_front")) logical = "normal/img_product_shiromimi_front_800x800.png";
-      else if (src.includes("img_product_morikuma_front")) logical = "normal/img_product_morikuma_front_800x800.png";
-      else if (src.includes("img_product_kuroneko_front")) logical = "normal/img_product_kuroneko_front_800x800.png";
-      else if (src.includes("img_product_yoruneko_front")) logical = "normal/img_product_yoruneko_front_800x800.png";
-      else if (src.includes("img_product_hoshiumi_front")) logical = "normal/img_product_hoshiumi_front_800x800.png";
-      else if (src.includes("img_product_shiromimi_eye")) logical = "anomaly1/img_product_shiromimi_eye_800x800.png";
-      else if (src.includes("img_product_morikuma_wrongface")) logical = "anomaly2/img_product_morikuma_wrongface_800x800.png";
-      else if (src.includes("img_product_yoruneko_red")) logical = "anomaly3/img_product_yoruneko_red_800x800.png";
-
-      if (logical) setImgR2First(img, logical);
-    });
-  }
-
-  function bindDetailFlow() {
-    const img = document.getElementById("detail-image");
-    const btn = document.getElementById("toggle-back-btn");
-    const overlay = document.getElementById("transition-overlay");
-    if (!img || !btn) return;
-
-    if (!img.dataset.frontLogical) {
-      img.dataset.frontLogical = "normal/img_product_shiromimi_front_800x800.png";
-    }
-
-    const freshBtn = btn.cloneNode(true);
-    btn.parentNode.replaceChild(freshBtn, btn);
-
-    const freshImg = document.getElementById("detail-image");
-
-    setImgR2First(freshImg, img.dataset.frontLogical);
-
-    freshBtn.addEventListener("click", function (e) {
-      e.preventDefault();
-      const isBack = document.body.classList.contains("is-showing-back");
-      if (isBack) {
-        document.body.classList.remove("is-showing-back");
-        freshBtn.textContent = "裏面を見る";
-        if (window.state) window.state.showingBack = false;
-        setImgR2First(freshImg, freshImg.dataset.frontLogical || "normal/img_product_shiromimi_front_800x800.png");
-      } else {
-        document.body.classList.add("is-showing-back");
-        freshBtn.textContent = "表面に戻す";
-        if (window.state) window.state.showingBack = true;
-        setImgR2First(freshImg, "anomaly1/img_product_shiromimi_eye_800x800.png");
-      }
-    });
-
-    const newImg = freshImg.cloneNode(true);
-    freshImg.parentNode.replaceChild(newImg, freshImg);
-    if (!newImg.dataset.frontLogical) newImg.dataset.frontLogical = "normal/img_product_shiromimi_front_800x800.png";
-    if (document.body.classList.contains("is-showing-back")) {
-      setImgR2First(newImg, "anomaly1/img_product_shiromimi_eye_800x800.png");
-    } else {
-      setImgR2First(newImg, newImg.dataset.frontLogical);
-    }
-
-    newImg.addEventListener("click", function () {
-      if (!document.body.classList.contains("is-showing-back")) return;
-      const mode = (window.state && window.state.mode) || (new URLSearchParams(location.search).get("mode") || "normal");
-      if (!(mode === "normal" || mode === "anomaly1")) return;
-
-      const go = function () {
-        const url = new URL(location.href);
-        url.searchParams.set("mode", "anomaly2");
-        location.href = url.toString();
-      };
-
-      if (typeof runSiteAlteredOverlay === "function") {
-        runSiteAlteredOverlay(go);
-      } else if (overlay) {
-        overlay.classList.add("active");
-        overlay.setAttribute("aria-hidden", "false");
-        const close = function () {
-          overlay.classList.remove("active");
-          overlay.setAttribute("aria-hidden", "true");
-          overlay.removeEventListener("click", close);
-          go();
-        };
-        overlay.addEventListener("click", close);
-      } else {
-        go();
-      }
-    });
-  }
-
-  function bootR2First() {
-    replaceStaticImages();
-    bindDetailFlow();
-    setTimeout(replaceStaticImages, 100);
-    setTimeout(bindDetailFlow, 150);
-    setTimeout(replaceStaticImages, 400);
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", bootR2First);
-  } else {
-    bootR2First();
-  }
-})();
-
-
-
-/* === FINAL DETAIL FIX: R2-first backside toggle === */
-(function () {
-  const R2_BASE = (window.SITE_CONFIG && window.SITE_CONFIG.r2PublicBase
-    ? window.SITE_CONFIG.r2PublicBase
-    : "https://pub-12f05472082049758097370dd8aaab52.r2.dev/images").replace(/\/$/, "");
-
-  function r2(path) {
-    return `${R2_BASE}/${String(path).replace(/^\/+/, "")}`;
-  }
-
-  function setR2First(img, logicalPath) {
-    if (!img || !logicalPath) return;
-    img.onerror = function () {
-      this.onerror = null;
-      this.src = `images/${logicalPath}`;
-    };
-    img.src = r2(logicalPath);
-  }
-
-  function getDetailImage() {
-    return document.getElementById("detail-image");
-  }
-
-  function getToggleButton() {
-    return document.getElementById("toggle-back-btn");
-  }
-
-  function initDetailImage() {
-    const img = getDetailImage();
-    const btn = getToggleButton();
-    if (!img) return;
-
-    if (!img.dataset.frontLogical) {
-      img.dataset.frontLogical =
-        img.dataset.frontLogical ||
-        img.dataset.frontSrc ||
-        img.dataset.frontLogical ||
-        "normal/img_product_shiromimi_front_800x800.png";
-    }
-
-    if (!img.dataset.side) {
-      const current = img.getAttribute("src") || "";
-      img.dataset.side = /img_product_shiromimi_eye_800x800\.png/.test(current) ? "back" : "front";
-    }
-
-    if (img.dataset.side === "back") {
-      setR2First(img, "anomaly1/img_product_shiromimi_eye_800x800.png");
-      document.body.classList.add("is-showing-back");
-      if (btn) btn.textContent = "表面に戻す";
-    } else {
-      setR2First(img, img.dataset.frontLogical);
-      document.body.classList.remove("is-showing-back");
-      if (btn) btn.textContent = "裏面を見る";
-    }
-  }
-
-  function toggleDetailImage() {
-    const img = getDetailImage();
-    const btn = getToggleButton();
-    if (!img) return;
-
-    if (!img.dataset.frontLogical) {
-      img.dataset.frontLogical = "normal/img_product_shiromimi_front_800x800.png";
-    }
-
-    const nextSide = img.dataset.side === "back" ? "front" : "back";
-    img.dataset.side = nextSide;
-
-    if (nextSide === "back") {
-      setR2First(img, "anomaly1/img_product_shiromimi_eye_800x800.png");
-      document.body.classList.add("is-showing-back");
-      if (window.state) window.state.showingBack = true;
-      if (btn) btn.textContent = "表面に戻す";
-    } else {
-      setR2First(img, img.dataset.frontLogical);
-      document.body.classList.remove("is-showing-back");
-      if (window.state) window.state.showingBack = false;
-      if (btn) btn.textContent = "裏面を見る";
-    }
-  }
-
-  function goToAnomaly2() {
-    const url = new URL(location.href);
-    url.searchParams.set("mode", "anomaly2");
-    location.href = url.toString();
-  }
-
-  function showTransition(next) {
-    const overlay = document.getElementById("transition-overlay");
-    if (!overlay) {
-      if (typeof next === "function") next();
-      return;
-    }
-
-    overlay.classList.add("active");
-    overlay.setAttribute("aria-hidden", "false");
-
-    const close = function () {
-      overlay.classList.remove("active");
-      overlay.setAttribute("aria-hidden", "true");
-      overlay.removeEventListener("click", close);
-      if (typeof next === "function") next();
-    };
-
-    overlay.addEventListener("click", close);
-  }
-
-  document.addEventListener("click", function (e) {
-    const toggle = e.target && e.target.closest ? e.target.closest("#toggle-back-btn") : null;
-    if (toggle) {
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-      toggleDetailImage();
-      return;
-    }
-
-    const img = e.target && e.target.closest ? e.target.closest("#detail-image") : null;
-    if (img) {
-      const mode = (window.state && window.state.mode) || (new URLSearchParams(location.search).get("mode") || "normal");
-      if (img.dataset.side !== "back") return;
-      if (!(mode === "normal" || mode === "anomaly1")) return;
-
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-
-      if (typeof runSiteAlteredOverlay === "function") {
-        runSiteAlteredOverlay(goToAnomaly2);
-      } else {
-        showTransition(goToAnomaly2);
-      }
-    }
-  }, true);
-
-  function boot() {
-    initDetailImage();
-    setTimeout(initDetailImage, 100);
-    setTimeout(initDetailImage, 400);
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", boot);
-  } else {
-    boot();
-  }
-})();
-
-
-
 /* === FINAL FIX: product detail card click restore === */
 (function () {
   function getProductIdFromElement(el) {
@@ -1347,66 +1066,16 @@ window.checkLumoraState = function () {
 
 
 
-/* === FINAL BACK IMAGE FIX: use each product's own backImage === */
-(function () {
-  function syncPerProductBackImage() {
-    if (!(window.state && window.els && window.els.detailImage && Array.isArray(window.state.products))) return;
-    const product = window.state.products.find(p => p.id === window.state.currentProductId) || window.state.products[0];
-    if (!product) return;
 
-    let imgSrc = product.image || "";
-    if (window.state.mode === "truth" && product.imageTruth) imgSrc = product.imageTruth;
-    if (window.state.mode === "anomaly1" && product.id === "shiromimi" && product.imageAnomaly1 && !window.state.showingBack) {
-      imgSrc = product.imageAnomaly1;
-    }
-    if (window.state.showingBack && product.backImage) {
-      imgSrc = product.backImage;
-    }
 
-    if (typeof setImageSource === "function") {
-      setImageSource(window.els.detailImage, imgSrc);
-    } else {
-      window.els.detailImage.src = imgSrc;
-    }
-
-    window.els.detailImage.dataset.productId = product.id;
-    window.els.detailImage.dataset.frontSrc = product.image || "";
-    window.els.detailImage.dataset.backSrc = product.backImage || "";
-    window.els.detailImage.alt = window.state.showingBack ? `${product.name}の裏面` : (product.name || "商品詳細");
-
-    if (window.els.toggleBackBtn) {
-      window.els.toggleBackBtn.textContent = window.state.showingBack ? "表面に戻す" : "裏面を見る";
-    }
-  }
-
-  // wrap renderDetail once
-  if (typeof window.renderDetail === "function" && !window.__backImageWrapped) {
-    const originalRenderDetail = window.renderDetail;
-    window.renderDetail = function () {
-      const result = originalRenderDetail.apply(this, arguments);
-      syncPerProductBackImage();
-      return result;
-    };
-    window.__backImageWrapped = true;
-  }
-
-  document.addEventListener("click", function (e) {
-    const toggleBtn = e.target.closest("#toggle-back-btn");
-    const detailBtn = e.target.closest("[data-view]");
-    if (toggleBtn || detailBtn) {
-      setTimeout(syncPerProductBackImage, 0);
-      setTimeout(syncPerProductBackImage, 80);
-      setTimeout(syncPerProductBackImage, 200);
-    }
-  }, true);
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", function () {
-      setTimeout(syncPerProductBackImage, 50);
-      setTimeout(syncPerProductBackImage, 200);
-    });
-  } else {
-    setTimeout(syncPerProductBackImage, 50);
-    setTimeout(syncPerProductBackImage, 200);
-  }
-})();
+window.checkLumoraBackImage = function () {
+  const product = state.products.find(p => p.id === state.currentProductId) || state.products[0];
+  const img = document.getElementById("detail-image");
+  return {
+    currentProductId: state.currentProductId,
+    showingBack: state.showingBack,
+    backImage: product ? product.backImage : null,
+    resolvedSrc: img ? img.src : null,
+    rawSrc: img ? img.getAttribute("src") : null
+  };
+};

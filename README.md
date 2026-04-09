@@ -180,3 +180,15 @@ checkLumoraState()
 ## 背面画像修正
 - 各商品の `backImage` を個別パスに修正
 - 詳細描画後にも現在商品の `backImage` を再適用する処理を追加
+
+
+## R2構造修正版
+- 背面画像は `products.json` の `backImage` をそのまま使う構造に修正
+- `resolveAssetPath()` により、以下のR2構造へ読みに行きます
+  - `images/anomaly1/img_product_shiromimi_back_800x800.png`
+    → `https://pub-12f05472082049758097370dd8aaab52.r2.dev/images/anomaly1/img_product_shiromimi_back_800x800.png`
+- しろみみ_eye固定の後付け処理は削除
+- 確認用:
+```js
+checkLumoraBackImage()
+```

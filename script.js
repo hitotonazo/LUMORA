@@ -123,23 +123,30 @@ function getAnomaly2Craft(product) {
   return product.anomaly2Craft || "対象者を内部へ押し込み、外見が崩れないよう縫合線を再調整します。";
 }
 
-let noiseNextAction = null;
+let pendingModeAfterOverlay = null;
+
 function closeSiteAlteredOverlay() {
   if (!els.noiseOverlay) return;
   els.noiseOverlay.classList.remove("is-active");
   els.noiseOverlay.setAttribute("aria-hidden", "true");
 }
-function runSiteAlteredOverlay(nextAction = null) {
+
+function runSiteAlteredOverlay(nextMode = null) {
   if (!els.noiseOverlay) {
-    if (typeof nextAction === "function") nextAction();
+    if (typeof nextMode === "string" && nextMode) {
+      updateUrlMode(nextMode);
+      setMode(nextMode);
+    }
     return;
   }
-  noiseNextAction = typeof nextAction === "function" ? nextAction : null;
+  pendingModeAfterOverlay = nextMode;
   els.noiseOverlay.classList.add("is-active");
   els.noiseOverlay.setAttribute("aria-hidden", "false");
 }
 
 function setMode(mode) {
+  closeSiteAlteredOverlay();
+  pendingModeAfterOverlay = null;
   closeSiteAlteredOverlay();
   state.mode = mode;
   state.showingBack = false;
@@ -281,36 +288,19 @@ function renderBrand() {
 function bindEvents() {
   if (els.noiseOverlay) {
     els.noiseOverlay.addEventListener("click", () => {
+      const nextMode = pendingModeAfterOverlay;
+      pendingModeAfterOverlay = null;
       closeSiteAlteredOverlay();
-      const action = noiseNextAction;
-      noiseNextAction = null;
-      if (typeof action === "function") action();
+      if (typeof nextMode === "string" && nextMode) {
+        updateUrlMode(nextMode);
+        setMode(nextMode);
+      }
     });
-  }
-  els.toggleBackBtn.addEventListener("click", e => {
-    e.preventDefault();
-    state.showingBack = !state.showingBack;
-    renderDetail();
-  });
-
-  els.detailImage.addEventListener("click", () => {
-    const product = currentProduct();
-    if (!product || !state.showingBack) return;
-
-    if (product.id === "shiromimi" && (state.mode === "normal" || state.mode === "anomaly1")) {
-      runSiteAlteredOverlay(() => {
-        updateUrlMode("anomaly2");
-        setMode("anomaly2");
-      });
-    }
   });
 
   els.detailCraft.addEventListener("click", () => {
     if (state.mode !== "anomaly2") return;
-    runSiteAlteredOverlay(() => {
-      updateUrlMode("anomaly3");
-      setMode("anomaly3");
-    });
+    runSiteAlteredOverlay("anomaly3");
   });
 
   els.detailBirthplace.addEventListener("click", () => {
@@ -320,10 +310,7 @@ function bindEvents() {
       renderDetail();
       return;
     }
-    runSiteAlteredOverlay(() => {
-      updateUrlMode("truth");
-      setMode("truth");
-    });
+    runSiteAlteredOverlay("truth");
   });
 
   els.searchForm.addEventListener("submit", e => {
@@ -378,5 +365,15 @@ window.checkNoiseOverlayState = function () {
     className: els.noiseOverlay ? els.noiseOverlay.className : null,
     ariaHidden: els.noiseOverlay ? els.noiseOverlay.getAttribute("aria-hidden") : null,
     isActive: els.noiseOverlay ? els.noiseOverlay.classList.contains("is-active") : null
+  };
+};
+
+
+window.checkOverlayTransitionState = function () {
+  return {
+    mode: state.mode,
+    pendingModeAfterOverlay,
+    overlayActive: !!(els.noiseOverlay && els.noiseOverlay.classList.contains("is-active")),
+    overlayAria: els.noiseOverlay ? els.noiseOverlay.getAttribute("aria-hidden") : null
   };
 };

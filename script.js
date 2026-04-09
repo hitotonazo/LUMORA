@@ -39,6 +39,9 @@ const els = {
   shareWrap: document.getElementById("share-wrap"),
   shareBtn: document.getElementById("share-btn"),
 };
+window.state = state;
+window.els = els;
+window.__LUMORA_DEBUG__ = true;
 
 document.addEventListener("DOMContentLoaded", init);
 
@@ -126,7 +129,15 @@ function bindEvents() {
     els.overlay.removeAttribute("data-next-mode");
   });
 
-  els.toggleBackBtn.addEventListener("click", () => {
+  els.toggleBackBtn.addEventListener("click", e => {
+    e.preventDefault();
+    const product = state.products.find(p => p.id === state.currentProductId) || state.products[0];
+    if (!product) return;
+    if (product.id !== "shiromimi") {
+      state.showingBack = false;
+      renderDetail();
+      return;
+    }
     state.showingBack = !state.showingBack;
     renderDetail();
   });
@@ -139,6 +150,8 @@ function bindEvents() {
     }
   });
   els.detailImage.addEventListener("click", () => {
+    const product = state.products.find(p => p.id === state.currentProductId) || state.products[0];
+    if (!product || product.id !== "shiromimi") return;
     if (!state.showingBack) return;
     if (state.mode !== "normal" && state.mode !== "anomaly1") return;
 
@@ -238,15 +251,16 @@ function renderProducts() {
   state.products.forEach(product => {
     const card = document.createElement("article");
     card.className = "product-card";
+    card.setAttribute("data-product-id", product.id);
     const imgSrc = getProductImage(product);
     card.innerHTML = `
-      <img src="${resolveAssetPath(imgSrc)}" alt="${product.name}" data-fallback="${imgSrc}">
+      <img src="${resolveAssetPath(imgSrc)}" alt="${product.name}" data-fallback="${imgSrc}" data-product-id="${product.id}">
       <div class="product-copy">
-        <div class="meta"><span>${product.series}</span><span>${product.price}</span></div>
-        <h3>${product.name}</h3>
-        <p>${state.mode === "truth" ? product.craftTruth : product.tagline}</p>
+        <div class="meta"><span>${product.series || ""}</span><span>${product.price || ""}</span></div>
+        <h3>${product.name || ""}</h3>
+        <p>${state.mode === "truth" ? (product.craftTruth || "") : (product.tagline || "")}</p>
         <div class="product-actions">
-          <button class="mini-btn" data-view="${product.id}">詳細を見る</button>
+          <button class="mini-btn" data-view="${product.id}" data-product-id="${product.id}">詳細を見る</button>
           ${state.mode === "anomaly1" && product.id === "shiromimi" ? `<button class="mini-btn anomaly-trigger" data-trigger="anomaly2">この子を見る</button>` : ``}
         </div>
       </div>`;
@@ -256,7 +270,8 @@ function renderProducts() {
   els.productGrid.querySelectorAll("img[data-fallback]").forEach(img => bindImageFallback(img, img.dataset.fallback));
 
   els.productGrid.querySelectorAll("[data-view]").forEach(btn => {
-    btn.addEventListener("click", () => {
+    btn.addEventListener("click", e => {
+      e.preventDefault();
       state.currentProductId = btn.dataset.view;
       state.showingBack = false;
       renderProducts();
@@ -269,26 +284,39 @@ function renderProducts() {
     btn.addEventListener("click", () => triggerTransition("anomaly2"));
   });
 }
-
 function renderDetail() {
   const product = state.products.find(p => p.id === state.currentProductId) || state.products[0];
-  els.detailSeries.textContent = product.series;
-  els.detailName.textContent = product.name;
-  els.detailPrice.textContent = product.price;
-  els.detailDescription.textContent = state.mode === "truth" ? product.craftTruth : product.description;
-  els.detailBirthplace.textContent = product.birthplace;
-  els.detailCraft.textContent = state.mode === "anomaly3" || state.mode === "truth" ? product.craftTruth : product.craftNormal;
+  if (!product) return;
+
+  els.detailSeries.textContent = product.series || "";
+  els.detailName.textContent = product.name || "";
+  els.detailPrice.textContent = product.price || "";
+  els.detailDescription.textContent = state.mode === "truth" ? (product.craftTruth || product.description || "") : (product.description || "");
+  els.detailBirthplace.textContent = product.birthplace || "";
+  els.detailCraft.textContent = (state.mode === "anomaly3" || state.mode === "truth") ? (product.craftTruth || product.craftNormal || "") : (product.craftNormal || "");
   els.craftText.textContent = state.mode === "truth"
     ? "手順の一つひとつが、通常の制作工程ではなく“処理の記録”として読めるように変化しています。"
     : "表情・縫製・綿入れの順に仕上げ、最終調整後に出荷します。";
 
-  let imgSrc = getProductImage(product);
-  if (state.showingBack) imgSrc = product.backImage || imgSrc;
-  setImageSource(els.detailImage, imgSrc);
-  els.detailImage.alt = state.showingBack ? `${product.name}の裏面` : product.name;
-  els.toggleBackBtn.textContent = state.showingBack ? "表面に戻す" : "裏面を見る";
-}
+  if (product.id !== "shiromimi" && state.showingBack) {
+    state.showingBack = false;
+    document.body.classList.remove("is-showing-back");
+  }
 
+  let imgSrc = getProductImage(product);
+  if (state.showingBack && product.id === "shiromimi") {
+    imgSrc = product.backImage || imgSrc;
+    document.body.classList.add("is-showing-back");
+  } else {
+    document.body.classList.remove("is-showing-back");
+  }
+
+  setImageSource(els.detailImage, imgSrc);
+  els.detailImage.dataset.productId = product.id;
+  els.detailImage.dataset.frontSrc = product.image || imgSrc;
+  els.detailImage.alt = state.showingBack && product.id === "shiromimi" ? `${product.name}の裏面` : (product.name || "商品詳細");
+  els.toggleBackBtn.textContent = state.showingBack && product.id === "shiromimi" ? "表面に戻す" : "裏面を見る";
+}
 function renderNews() {
   const items = state.mode === "truth" ? state.news.truth : state.news.normal;
   els.newsList.innerHTML = items.map(item => `
@@ -1307,3 +1335,16 @@ function runSiteAlteredOverlay(next) {
     install();
   }
 })();
+
+
+window.checkLumoraState = function () {
+  const img = document.getElementById("detail-image");
+  return {
+    currentProductId: state.currentProductId,
+    showingBack: state.showingBack,
+    mode: state.mode,
+    detailImageSrc: img ? img.getAttribute("src") : null,
+    detailImageResolvedSrc: img ? img.src : null,
+    detailImageProductId: img ? img.dataset.productId : null
+  };
+};

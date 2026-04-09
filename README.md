@@ -148,3 +148,18 @@ R2 の推奨配置:
 - `renderDetail()` をラップして、詳細再描画のたびに画像を現在の商品IDへ同期
 - `data-view` クリック後にも再同期
 - 全画像R2優先は維持
+
+
+## 直接修正版
+- `renderProducts()` を直接修正
+- `renderDetail()` を直接修正
+- `toggle-back-btn` の処理を直接修正
+- `detail-image` のクリック処理を直接修正
+- `window.state`, `window.els`, `window.checkLumoraState()` を追加
+
+確認用Consoleコマンド
+```js
+state.currentProductId
+document.getElementById("detail-image").src
+checkLumoraState()
+```

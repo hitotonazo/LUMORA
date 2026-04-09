@@ -162,12 +162,6 @@ function bindEvents() {
     updateUrlMode("anomaly2");
     setMode("anomaly2");
   });
-      return;
-    }
-
-    updateUrlMode("anomaly2");
-    setMode("anomaly2");
-  });
 
   els.searchForm.addEventListener("submit", e => {
     e.preventDefault();

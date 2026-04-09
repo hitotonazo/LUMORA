@@ -198,3 +198,7 @@ checkBackImageConfig()
 state.currentProductId
 document.getElementById("detail-image").src
 ```
+
+
+## Syntax fix
+- script.js の detailImage クリック処理に混入していた重複コードを削除

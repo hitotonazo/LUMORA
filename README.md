@@ -163,3 +163,15 @@ state.currentProductId
 document.getElementById("detail-image").src
 checkLumoraState()
 ```
+
+
+## 各ぬいぐるみの背面ダミー対応
+- 全商品に `backImage` を追加
+- 追加したダミー画像
+  - `images/anomaly1/img_product_shiromimi_back_800x800.png`
+  - `images/anomaly1/img_product_morikuma_back_800x800.png`
+  - `images/anomaly1/img_product_koroneko_back_800x800.png`
+  - `images/anomaly1/img_product_yoruneko_back_800x800.png`
+  - `images/anomaly1/img_product_hoshiumi_back_800x800.png`
+- どの商品でも「裏面を見る」で背面ダミー画像を表示
+- 背面表示中に画像クリックで改変演出 → anomaly2

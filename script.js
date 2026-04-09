@@ -133,11 +133,6 @@ function bindEvents() {
     e.preventDefault();
     const product = state.products.find(p => p.id === state.currentProductId) || state.products[0];
     if (!product) return;
-    if (product.id !== "shiromimi") {
-      state.showingBack = false;
-      renderDetail();
-      return;
-    }
     state.showingBack = !state.showingBack;
     renderDetail();
   });
@@ -151,7 +146,7 @@ function bindEvents() {
   });
   els.detailImage.addEventListener("click", () => {
     const product = state.products.find(p => p.id === state.currentProductId) || state.products[0];
-    if (!product || product.id !== "shiromimi") return;
+    if (!product) return;
     if (!state.showingBack) return;
     if (state.mode !== "normal" && state.mode !== "anomaly1") return;
 

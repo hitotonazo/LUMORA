@@ -1343,3 +1343,16 @@ window.checkLumoraState = function () {
     detailImageProductId: img ? img.dataset.productId : null
   };
 };
+
+
+window.checkBackImageConfig = function () {
+  const product = state.products.find(p => p.id === state.currentProductId) || state.products[0];
+  const img = document.getElementById("detail-image");
+  return {
+    currentProductId: state.currentProductId,
+    showingBack: state.showingBack,
+    backImage: product ? product.backImage : null,
+    rawSrc: img ? img.getAttribute("src") : null,
+    resolvedSrc: img ? img.src : null
+  };
+};

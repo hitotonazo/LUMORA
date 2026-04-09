@@ -175,3 +175,20 @@ checkLumoraState()
   - `images/anomaly1/img_product_hoshiumi_back_800x800.png`
 - どの商品でも「裏面を見る」で背面ダミー画像を表示
 - 背面表示中に画像クリックで改変演出 → anomaly2
+
+
+## R2背面画像修正
+各カードの背面画像パスを以下に設定しました。
+- images/anomaly1/img_product_morikuma_back_800x800.png
+- images/anomaly1/img_product_koroneko_back_800x800.png
+- images/anomaly1/img_product_yoruneko_back_800x800.png
+- images/anomaly1/img_product_hoshiumi_back_800x800.png
+
+しろみみは既存導線維持のため:
+- images/anomaly1/img_product_shiromimi_eye_800x800.png
+
+仕様
+- どの商品でも「裏面を見る」で product.backImage を表示
+- R2は既存の resolveAssetPath() / r2PublicBase を通して参照
+- 改変演出の進行は しろみみ のみ維持
+- 確認用: checkBackImageConfig()

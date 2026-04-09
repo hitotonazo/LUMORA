@@ -482,3 +482,16 @@ body[data-mode="anomaly3"] #detail-birthplace.revealed-place{
 @media (max-width:760px){
   .noise-message{white-space:normal;letter-spacing:0.08em;line-height:1.5}
 }
+
+
+/* overlay visibility safety fix */
+#noise-overlay {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+#noise-overlay.is-active {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}

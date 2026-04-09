@@ -194,3 +194,9 @@ checkLumoraState()
 - 確認用:
   - `checkRequestedState()`
 
+
+
+## 修正
+- サイト改変演出のオーバーレイが閉じずに残る問題を修正
+- オーバーレイクリックで必ず閉じて次処理へ進むように統一
+- 確認用: checkNoiseOverlayState()

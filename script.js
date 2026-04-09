@@ -123,25 +123,24 @@ function getAnomaly2Craft(product) {
   return product.anomaly2Craft || "対象者を内部へ押し込み、外見が崩れないよう縫合線を再調整します。";
 }
 
+let noiseNextAction = null;
+function closeSiteAlteredOverlay() {
+  if (!els.noiseOverlay) return;
+  els.noiseOverlay.classList.remove("is-active");
+  els.noiseOverlay.setAttribute("aria-hidden", "true");
+}
 function runSiteAlteredOverlay(nextAction = null) {
   if (!els.noiseOverlay) {
     if (typeof nextAction === "function") nextAction();
     return;
   }
+  noiseNextAction = typeof nextAction === "function" ? nextAction : null;
   els.noiseOverlay.classList.add("is-active");
   els.noiseOverlay.setAttribute("aria-hidden", "false");
-
-  const handle = () => {
-    els.noiseOverlay.classList.remove("is-active");
-    els.noiseOverlay.setAttribute("aria-hidden", "true");
-    els.noiseOverlay.removeEventListener("click", handle);
-    if (typeof nextAction === "function") nextAction();
-  };
-
-  els.noiseOverlay.addEventListener("click", handle);
 }
 
 function setMode(mode) {
+  closeSiteAlteredOverlay();
   state.mode = mode;
   state.showingBack = false;
   state.anomaly3Clicks = 0;
@@ -280,6 +279,14 @@ function renderBrand() {
 }
 
 function bindEvents() {
+  if (els.noiseOverlay) {
+    els.noiseOverlay.addEventListener("click", () => {
+      closeSiteAlteredOverlay();
+      const action = noiseNextAction;
+      noiseNextAction = null;
+      if (typeof action === "function") action();
+    });
+  }
   els.toggleBackBtn.addEventListener("click", e => {
     e.preventDefault();
     state.showingBack = !state.showingBack;
@@ -361,5 +368,15 @@ window.checkRequestedState = function () {
     craftText: els.detailCraft ? els.detailCraft.textContent : null,
     birthplace: els.detailBirthplace ? els.detailBirthplace.textContent : null,
     detailImageSrc: els.detailImage ? els.detailImage.src : null
+  };
+};
+
+
+window.checkNoiseOverlayState = function () {
+  return {
+    hasOverlay: !!els.noiseOverlay,
+    className: els.noiseOverlay ? els.noiseOverlay.className : null,
+    ariaHidden: els.noiseOverlay ? els.noiseOverlay.getAttribute("aria-hidden") : null,
+    isActive: els.noiseOverlay ? els.noiseOverlay.classList.contains("is-active") : null
   };
 };

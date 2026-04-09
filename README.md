@@ -177,18 +177,24 @@ checkLumoraState()
 - 背面表示中に画像クリックで改変演出 → anomaly2
 
 
-## R2背面画像修正
-各カードの背面画像パスを以下に設定しました。
-- images/anomaly1/img_product_morikuma_back_800x800.png
-- images/anomaly1/img_product_koroneko_back_800x800.png
-- images/anomaly1/img_product_yoruneko_back_800x800.png
-- images/anomaly1/img_product_hoshiumi_back_800x800.png
+## 今回の修正内容
+このZIPは、添付ZIPをベースに「各カードごとの背面画像をR2から読む」ことだけに絞って直接修正しています。
 
-しろみみは既存導線維持のため:
-- images/anomaly1/img_product_shiromimi_eye_800x800.png
+### 背面画像パス
+- shiromimi: `images/anomaly1/img_product_shiromimi_eye_800x800.png`
+- morikuma: `images/anomaly1/img_product_morikuma_back_800x800.png`
+- koroneko: `images/anomaly1/img_product_koroneko_back_800x800.png`
+- yoruneko: `images/anomaly1/img_product_yoruneko_back_800x800.png`
+- hoshiumi: `images/anomaly1/img_product_hoshiumi_back_800x800.png`
 
-仕様
-- どの商品でも「裏面を見る」で product.backImage を表示
-- R2は既存の resolveAssetPath() / r2PublicBase を通して参照
-- 改変演出の進行は しろみみ のみ維持
-- 確認用: checkBackImageConfig()
+### 仕様
+- どの商品でも「裏面を見る」で `product.backImage` を表示
+- R2は既存の `resolveAssetPath()` / `r2PublicBase` 経由で参照
+- 改変演出への進行は `shiromimi` のみ
+
+### 確認用
+```js
+checkBackImageConfig()
+state.currentProductId
+document.getElementById("detail-image").src
+```

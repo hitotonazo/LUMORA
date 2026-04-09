@@ -148,6 +148,7 @@ function bindEvents() {
     const product = state.products.find(p => p.id === state.currentProductId) || state.products[0];
     if (!product) return;
     if (!state.showingBack) return;
+    if (product.id !== "shiromimi") return;
     if (state.mode !== "normal" && state.mode !== "anomaly1") return;
 
     if (typeof runSiteAlteredOverlay === "function") {
@@ -155,6 +156,12 @@ function bindEvents() {
         updateUrlMode("anomaly2");
         setMode("anomaly2");
       });
+      return;
+    }
+
+    updateUrlMode("anomaly2");
+    setMode("anomaly2");
+  });
       return;
     }
 
@@ -283,34 +290,26 @@ function renderDetail() {
   const product = state.products.find(p => p.id === state.currentProductId) || state.products[0];
   if (!product) return;
 
-  els.detailSeries.textContent = product.series || "";
-  els.detailName.textContent = product.name || "";
-  els.detailPrice.textContent = product.price || "";
-  els.detailDescription.textContent = state.mode === "truth" ? (product.craftTruth || product.description || "") : (product.description || "");
-  els.detailBirthplace.textContent = product.birthplace || "";
-  els.detailCraft.textContent = (state.mode === "anomaly3" || state.mode === "truth") ? (product.craftTruth || product.craftNormal || "") : (product.craftNormal || "");
+  els.detailSeries.textContent = product.series;
+  els.detailName.textContent = product.name;
+  els.detailPrice.textContent = product.price;
+  els.detailDescription.textContent = state.mode === "truth" ? product.craftTruth : product.description;
+  els.detailBirthplace.textContent = product.birthplace;
+  els.detailCraft.textContent = state.mode === "anomaly3" || state.mode === "truth" ? product.craftTruth : product.craftNormal;
   els.craftText.textContent = state.mode === "truth"
     ? "手順の一つひとつが、通常の制作工程ではなく“処理の記録”として読めるように変化しています。"
     : "表情・縫製・綿入れの順に仕上げ、最終調整後に出荷します。";
 
-  if (product.id !== "shiromimi" && state.showingBack) {
-    state.showingBack = false;
-    document.body.classList.remove("is-showing-back");
-  }
-
   let imgSrc = getProductImage(product);
-  if (state.showingBack && product.id === "shiromimi") {
+  if (state.showingBack) {
     imgSrc = product.backImage || imgSrc;
-    document.body.classList.add("is-showing-back");
-  } else {
-    document.body.classList.remove("is-showing-back");
   }
 
   setImageSource(els.detailImage, imgSrc);
+  els.detailImage.alt = state.showingBack ? `${product.name}の裏面` : product.name;
   els.detailImage.dataset.productId = product.id;
-  els.detailImage.dataset.frontSrc = product.image || imgSrc;
-  els.detailImage.alt = state.showingBack && product.id === "shiromimi" ? `${product.name}の裏面` : (product.name || "商品詳細");
-  els.toggleBackBtn.textContent = state.showingBack && product.id === "shiromimi" ? "表面に戻す" : "裏面を見る";
+  els.detailImage.dataset.backImage = product.backImage || "";
+  els.toggleBackBtn.textContent = state.showingBack ? "表面に戻す" : "裏面を見る";
 }
 function renderNews() {
   const items = state.mode === "truth" ? state.news.truth : state.news.normal;
@@ -383,81 +382,6 @@ function runSiteAlteredOverlay(next) {
 
   transitionOverlay.addEventListener("click", handleClose);
 }
-
-
-/* === stage 1 -> stage 2 flow === */
-(function () {
-  const backButton = document.getElementById("viewBackButton");
-  const backModal = document.getElementById("productBackModal");
-  const backClose = document.getElementById("productBackClose");
-  const backImage = document.getElementById("productBackImage");
-
-  function getModeFromQuery() {
-    const params = new URLSearchParams(window.location.search);
-    return params.get("mode") || "normal";
-  }
-
-  function setBodyStage(mode) {
-    document.body.classList.remove("stage-normal", "stage-anomaly1", "stage-anomaly2", "stage-anomaly3", "stage-truth");
-    document.body.classList.add(`stage-${mode}`);
-  }
-
-  function resolveBackImageForCurrentMode() {
-    // まずはサイト内のローカルダミー画像を優先して表示
-    return "images/anomaly1/img_product_shiromimi_eye_800x800.png";
-  }
-
-  function openBackModal() {
-    if (!backModal || !backImage) return;
-    backImage.src = resolveBackImageForCurrentMode();
-    backModal.classList.add("is-open");
-    backModal.setAttribute("aria-hidden", "false");
-  }
-
-  function closeBackModal() {
-    if (!backModal) return;
-    backModal.classList.remove("is-open");
-    backModal.setAttribute("aria-hidden", "true");
-  }
-
-  function goToMode(mode) {
-    const url = new URL(window.location.href);
-    url.searchParams.set("mode", mode);
-    window.location.href = url.toString();
-  }
-
-  if (backButton) {
-    backButton.addEventListener("click", openBackModal);
-  }
-
-  if (backClose) {
-    backClose.addEventListener("click", closeBackModal);
-  }
-
-  if (backModal) {
-    backModal.addEventListener("click", (event) => {
-      if (event.target === backModal || event.target.classList.contains("product-back-modal__backdrop")) {
-        closeBackModal();
-      }
-    });
-  }
-
-  if (backImage) {
-    backImage.addEventListener("click", () => {
-      closeBackModal();
-      if (typeof runSiteAlteredOverlay === "function") {
-        runSiteAlteredOverlay(() => {
-          goToMode("anomaly2");
-        });
-      } else {
-        goToMode("anomaly2");
-      }
-    });
-  }
-
-  // 初期モード反映
-  setBodyStage(getModeFromQuery());
-})();
 
 
 // この版では「裏面を見る」→メイン商品画像の差し替え で進行します。

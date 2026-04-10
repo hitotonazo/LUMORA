@@ -12,7 +12,11 @@
     "imageTruth": "images/truth/img_product_shiromimi_truth_800x800.png",
     "backImage": "images/anomaly1/img_product_shiromimi_eye_800x800.png",
     "craftNormal": "手縫いで表情を整え、綿をやさしく詰めて仕上げます。",
-    "craftTruth": "表情を整えるため、目元の位置を固定し、内部を丁寧に詰め直します。"
+    "craftTruth": "表情を整えるため、目元の位置を固定し、内部を丁寧に詰め直します。",
+    "normalBackImage": "images/anomaly1/img_product_shiromimi_back_800x800.png",
+    "anomaly1BackImage": "images/anomaly1/img_product_shiromimi_eye_800x800.png",
+    "foundPlace": "群馬県沼田市 篝森山 四合目",
+    "anomaly2Craft": "口部を縫い開き、対象者の四肢を折りたたんだのち綿材で外観を補正します。"
   },
   {
     "id": "morikuma",
@@ -26,7 +30,9 @@
     "imageTruth": "images/truth/img_product_morikuma_truth_800x800.png",
     "backImage": "images/anomaly1/img_product_morikuma_back_800x800.png",
     "craftNormal": "やわらかな生地を重ね、丸みのある形に整えています。",
-    "craftTruth": "形を崩さないよう縫い目を増やし、内部の固定を強めています。"
+    "craftTruth": "形を崩さないよう縫い目を増やし、内部の固定を強めています。",
+    "foundPlace": "栃木県日光市 裏見林道終点付近",
+    "anomaly2Craft": "内部骨格を抜き取り、腹部へ対象者を挿入後、縫合線が目立たないよう毛並みで隠します。"
   },
   {
     "id": "koroneko",
@@ -40,7 +46,9 @@
     "imageTruth": "images/truth/img_product_koroneko_truth_800x800.png",
     "backImage": "images/anomaly1/img_product_koroneko_back_800x800.png",
     "craftNormal": "毛並みの流れを意識しながら、なめらかに縫製しています。",
-    "craftTruth": "表面を整えたあと、不要なズレが出ないよう再固定します。"
+    "craftTruth": "表面を整えたあと、不要なズレが出ないよう再固定します。",
+    "foundPlace": "東京都青梅市 旧道脇排水溝付近",
+    "anomaly2Craft": "小型個体のため関節を逆向きに折り、頭部から順に詰め込んだあと首元を再固定します。"
   },
   {
     "id": "yoruneko",
@@ -53,7 +61,9 @@
     "image": "images/normal/img_product_yoruneko_front_800x800.png",
     "backImage": "images/anomaly1/img_product_yoruneko_back_800x800.png",
     "craftNormal": "色の濃淡を見ながらパーツを縫い合わせています。",
-    "craftTruth": "境目が目立たないよう、重ねた箇所を深く留めています。"
+    "craftTruth": "境目が目立たないよう、重ねた箇所を深く留めています。",
+    "foundPlace": "神奈川県足柄下郡 明神ヶ尾根旧登山道",
+    "anomaly2Craft": "皮膚片が外へ出ないよう布地を二重化し、内部の空隙へ対象者を圧入して輪郭を整えます。"
   },
   {
     "id": "hoshiumi",
@@ -66,6 +76,8 @@
     "image": "images/normal/img_product_hoshiumi_front_800x800.png",
     "backImage": "images/anomaly1/img_product_hoshiumi_back_800x800.png",
     "craftNormal": "丸みがきれいに出るよう中綿量を細かく調整しています。",
-    "craftTruth": "内部の偏りを防ぐため、何度か開いて調整を繰り返します。"
+    "craftTruth": "内部の偏りを防ぐため、何度か開いて調整を繰り返します。",
+    "foundPlace": "静岡県賀茂郡 海沿い防風林北端",
+    "anomaly2Craft": "残留物が漏れないよう吸収材を詰め、破損箇所を縫い閉じた後に飾り布で表面を覆います。"
   }
 ]

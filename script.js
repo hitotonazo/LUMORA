@@ -385,3 +385,13 @@ window.checkOverlayVisibility = function () {
     messageComputedOpacity: message ? getComputedStyle(message).opacity : null
   };
 };
+
+
+window.inspectOverlayDom = function () {
+  return {
+    hasScreenNoise: !!document.getElementById("screen-noise"),
+    overlayContentCount: document.querySelectorAll(".overlay__content").length,
+    noiseOverlayCount: document.querySelectorAll("#noise-overlay").length,
+    noiseOverlayAria: document.getElementById("noise-overlay") ? document.getElementById("noise-overlay").getAttribute("aria-hidden") : null
+  };
+};

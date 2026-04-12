@@ -126,11 +126,6 @@ h2{font-size:clamp(24px,3vw,34px);line-height:1.3}
   mix-blend-mode:screen;
   animation:noiseShift .18s infinite steps(2);
 }
-.overlay__content{
-  position:relative;z-index:2;text-align:center;padding:24px
-}
-.overlay__text{font-size:clamp(28px,6vw,64px);font-weight:700;color:#ffe9ef;text-shadow:0 0 18px rgba(255,45,88,.55)}
-.overlay__sub{margin-top:10px;color:#d3c0c6}
 @keyframes noiseShift{
   0%{transform:translate(0,0)}
   25%{transform:translate(-1%,1%)}
@@ -138,12 +133,7 @@ h2{font-size:clamp(24px,3vw,34px);line-height:1.3}
   75%{transform:translate(2%,-2%)}
   100%{transform:translate(0,0)}
 }
-#screen-noise{
-  position:fixed;inset:0;pointer-events:none;z-index:90;opacity:0;transition:opacity .3s ease
-}
-body[data-mode="truth"] #screen-noise{opacity:.08}
-body.glitching #screen-noise{opacity:.75}
-body.glitching{transform:translateX(1px)}
+body[data-mode="truth"] body.glitching body.glitching{transform:translateX(1px)}
 body[data-mode="truth"]{
   background:var(--truth-bg);color:var(--truth-text)
 }
@@ -536,4 +526,17 @@ body[data-mode="anomaly3"] #detail-birthplace.revealed-place{color:#7c0606;font-
 #noise-overlay[aria-hidden="true"] *,
 .noise-overlay[aria-hidden="true"] * {
   opacity: 0 !important;
+}
+
+
+/* hard cleanup fix */
+#noise-overlay[aria-hidden="true"] *,
+.noise-overlay[aria-hidden="true"] * {
+  opacity: 0 !important;
+}
+#noise-overlay[aria-hidden="true"],
+.noise-overlay[aria-hidden="true"] {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }

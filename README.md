@@ -208,3 +208,8 @@ document.getElementById("detail-image").src
 - script.js を完全整理版へ置換
 - サイト改変演出を追加
 - 違和感①〜③の導線を反映
+
+
+## 修正
+- 古い overlay__content / screen-noise の残骸を削除
+- noise-overlay だけを残すよう整理

@@ -213,3 +213,8 @@ document.getElementById("detail-image").src
 ## 修正
 - 古い overlay__content / screen-noise の残骸を削除
 - noise-overlay だけを残すよう整理
+
+
+## 修正
+- noise-overlay のHTML位置を script.js より前へ移動
+- script実行時に `document.getElementById('noise-overlay')` が null になる問題を修正

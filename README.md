@@ -227,3 +227,7 @@ document.getElementById("detail-image").src
 
 ## 修正
 - index.html 内の noise-overlay 重複を全削除して1個だけ再挿入
+
+
+## 修正
+- index.html から overlay関連ノードを全削除して1個だけ再挿入

@@ -202,3 +202,9 @@ document.getElementById("detail-image").src
 
 ## Syntax fix
 - script.js の detailImage クリック処理に混入していた重複コードを削除
+
+
+## 修正
+- script.js を完全整理版へ置換
+- サイト改変演出を追加
+- 違和感①〜③の導線を反映

@@ -58,6 +58,7 @@ async function init() {
   state.config = window.SITE_CONFIG || null;
   bindEvents();
   closeSiteAlteredOverlay();
+  state.noiseNextMode = null;
   setMode(getModeFromUrl());
 }
 
@@ -370,5 +371,17 @@ window.checkRequestedState = function () {
     birthplace: els.detailBirthplace ? els.detailBirthplace.textContent : null,
     detailImageSrc: els.detailImage ? els.detailImage.src : null,
     overlayActive: els.noiseOverlay ? els.noiseOverlay.classList.contains("is-active") : null
+  };
+};
+
+
+window.checkOverlayVisibility = function () {
+  const overlay = document.getElementById("noise-overlay");
+  const message = document.getElementById("noise-message");
+  return {
+    overlayClass: overlay ? overlay.className : null,
+    overlayAria: overlay ? overlay.getAttribute("aria-hidden") : null,
+    overlayComputedOpacity: overlay ? getComputedStyle(overlay).opacity : null,
+    messageComputedOpacity: message ? getComputedStyle(message).opacity : null
   };
 };

@@ -495,3 +495,45 @@ body[data-mode="anomaly3"] #detail-birthplace.revealed-place{color:#7c0606;font-
 @media (max-width: 760px) {
   .noise-message { white-space: normal; letter-spacing: 0.08em; line-height: 1.5; }
 }
+
+
+/* overlay visibility hard fix */
+#noise-overlay,
+.noise-overlay {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+#noise-overlay .noise-message,
+.noise-overlay .noise-message,
+#noise-overlay .noise-layer,
+.noise-overlay .noise-layer,
+#noise-overlay .noise-flash,
+.noise-overlay .noise-flash {
+  opacity: 0 !important;
+}
+
+#noise-overlay.is-active,
+.noise-overlay.is-active {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+#noise-overlay.is-active .noise-message,
+.noise-overlay.is-active .noise-message {
+  opacity: 1 !important;
+}
+
+#noise-overlay.is-active .noise-layer,
+.noise-overlay.is-active .noise-layer,
+#noise-overlay.is-active .noise-flash,
+.noise-overlay.is-active .noise-flash {
+  opacity: initial !important;
+}
+
+#noise-overlay[aria-hidden="true"] *,
+.noise-overlay[aria-hidden="true"] * {
+  opacity: 0 !important;
+}

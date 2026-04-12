@@ -223,3 +223,7 @@ document.getElementById("detail-image").src
 ## 修正
 - script.js の後ろに残っていた stray な noise-message / noise-layer ノードを削除
 - noise-overlay を1個だけに再構成
+
+
+## 修正
+- index.html 内の noise-overlay 重複を全削除して1個だけ再挿入

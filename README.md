@@ -218,3 +218,8 @@ document.getElementById("detail-image").src
 ## 修正
 - noise-overlay のHTML位置を script.js より前へ移動
 - script実行時に `document.getElementById('noise-overlay')` が null になる問題を修正
+
+
+## 修正
+- script.js の後ろに残っていた stray な noise-message / noise-layer ノードを削除
+- noise-overlay を1個だけに再構成

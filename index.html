@@ -8,6 +8,9 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body data-mode="normal">
+<div id="transition-overlay" class="overlay" aria-hidden="true">
+    <div class="overlay__noise"></div>
+</div>
 
   <header class="site-header">
     <div class="container header-row">
@@ -180,9 +183,8 @@
     <p>©ぺいぽぴー</p>
     <p>※このWebサイトの内容はフィクションであり、実在の人物・団体とは一切関係がありません。</p>
   </footer>
-</div>
-</div>
-<div id="noise-overlay" class="noise-overlay" aria-hidden="true">
+
+  <div id="noise-overlay" class="noise-overlay" aria-hidden="true">
   <div class="noise-layer noise-layer-1"></div>
   <div class="noise-layer noise-layer-2"></div>
   <div class="noise-layer noise-layer-3"></div>
@@ -193,5 +195,19 @@
   <script src="data/share-config.js"></script>
   <script src="data/config.js"></script>
   <script src="script.js"></script>
+<div class="noise-layer noise-layer-2"></div>
+  <div class="noise-layer noise-layer-3"></div>
+  <div class="noise-flash"></div>
+  <div id="noise-message" class="noise-message">サイトが改変されました。</div>
+</div>
+
+<div id="productBackModal" class="product-back-modal" aria-hidden="true">
+  <div class="product-back-modal__backdrop"></div>
+  <div class="product-back-modal__dialog" role="dialog" aria-modal="true" aria-label="裏面画像">
+    <button id="productBackClose" class="product-back-modal__close" type="button" aria-label="閉じる">×</button>
+    <img id="productBackImage" class="product-back-modal__image" src="" alt="しろみみの裏面画像">
+  </div>
+</div>
+
 </body>
 </html>

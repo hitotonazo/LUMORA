@@ -205,29 +205,5 @@ document.getElementById("detail-image").src
 
 
 ## 修正
-- script.js を完全整理版へ置換
-- サイト改変演出を追加
-- 違和感①〜③の導線を反映
-
-
-## 修正
-- 古い overlay__content / screen-noise の残骸を削除
-- noise-overlay だけを残すよう整理
-
-
-## 修正
-- noise-overlay のHTML位置を script.js より前へ移動
-- script実行時に `document.getElementById('noise-overlay')` が null になる問題を修正
-
-
-## 修正
-- script.js の後ろに残っていた stray な noise-message / noise-layer ノードを削除
-- noise-overlay を1個だけに再構成
-
-
-## 修正
-- index.html 内の noise-overlay 重複を全削除して1個だけ再挿入
-
-
-## 修正
-- index.html から overlay関連ノードを全削除して1個だけ再挿入
+- 旧 overlay CSS を削除し、#noise-overlay 配下だけに効く scoped CSS へ置換
+- 初期状態で noise-message が見え続ける問題を修正

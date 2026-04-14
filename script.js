@@ -1,15 +1,15 @@
+const MODES = ["normal", "anomaly1", "anomaly2", "anomaly3", "truth"];
 
-const MODES = ["normal","anomaly1","anomaly2","anomaly3","truth"];
 const state = {
-  mode:"normal",
-  products:[],
-  reviews:null,
-  news:null,
-  config:null,
-  currentProductId:"shiromimi",
-  showingBack:false,
-  anomaly3Clicks:0,
-  noiseNextMode:null
+  mode: "normal",
+  products: [],
+  reviews: null,
+  news: null,
+  config: null,
+  currentProductId: "shiromimi",
+  showingBack: false,
+  anomaly3Clicks: 0,
+  noiseNextMode: null
 };
 
 const els = {
@@ -26,12 +26,9 @@ const els = {
   detailBirthplace: document.getElementById("detail-birthplace"),
   detailCraft: document.getElementById("detail-craft"),
   detailImage: document.getElementById("detail-image"),
-  craftPanel: document.getElementById("craft-panel"),
-  craftText: document.getElementById("craft-text"),
   newsList: document.getElementById("news-list"),
   reviewList: document.getElementById("review-list"),
   toggleBackBtn: document.getElementById("toggle-back-btn"),
-  openCraftBtn: document.getElementById("open-craft-btn"),
   searchForm: document.getElementById("search-form"),
   searchInput: document.getElementById("search-input"),
   searchMessage: document.getElementById("search-message"),
@@ -48,20 +45,22 @@ window.els = els;
 document.addEventListener("DOMContentLoaded", init);
 
 async function init() {
+  state.config = window.SITE_CONFIG || {};
+
   const [products, reviews, news] = await Promise.all([
-    fetch("data/products.json").then(r => r.json()),
-    fetch("data/reviews.json").then(r => r.json()),
-    fetch("data/news.json").then(r => r.json())
+    fetch("data/products.json", { cache: "no-store" }).then((r) => r.json()),
+    fetch("data/reviews.json", { cache: "no-store" }).then((r) => r.json()),
+    fetch("data/news.json", { cache: "no-store" }).then((r) => r.json())
   ]);
+
   state.products = products;
   state.reviews = reviews;
   state.news = news;
-  state.config = window.SITE_CONFIG || null;
 
-  applyStaticAssetPaths();
   bindEvents();
   closeSiteAlteredOverlay();
   setMode(getModeFromUrl());
+  applyStaticAssetPaths();
 }
 
 function getModeFromUrl() {
@@ -77,72 +76,61 @@ function updateUrlMode(mode) {
 }
 
 function resolveAssetPath(path) {
-  if (!path) return path;
+  if (!path) return "";
   if (/^(https?:)?\/\//.test(path) || path.startsWith("data:")) return path;
-  if (!state.config || !state.config.useR2) return path;
 
-  const publicBase = String(state.config.r2PublicBase || "").replace(/\/$/, "");
-  if (!publicBase) return path;
+  const normalized = String(path).replace(/^\.\//, "").replace(/^\/+/, "");
+  const config = state.config || {};
 
-  const normalizedPath = String(path).replace(/^\.\//, "");
-  const baseEndsWithImages = /\/images$/i.test(publicBase);
-
-  if (normalizedPath.startsWith("images/")) {
-    const trimmed = normalizedPath.replace(/^images\//, "");
-    return baseEndsWithImages
-      ? `${publicBase}/${trimmed}`
-      : `${publicBase}/${normalizedPath}`;
+  if (config.useProxy) {
+    return `${config.proxyPrefix || "/r2"}/${normalized}`;
   }
 
-  return `${publicBase}/${normalizedPath}`;
-}
-
-function bindImageFallback(img, fallback) {
-  if (!img || img.dataset.fallbackBound === "1") return;
-  img.dataset.fallbackBound = "1";
-  img.addEventListener("error", () => {
-    const failedSrc = img.currentSrc || img.src || "";
-    img.dataset.r2Error = failedSrc;
-    console.warn("R2 image load failed:", failedSrc, "fallback:", fallback || "(none)");
-    if (state.config?.useLocalFallback && fallback) {
-      const localFallback = new URL(fallback, location.href).href;
-      if (img.src !== localFallback) {
-        img.src = fallback;
+  if (config.useR2) {
+    const base = String(config.r2PublicBase || "").replace(/\/$/, "");
+    if (!base) return normalized;
+    if (normalized.startsWith("images/")) {
+      if (base.endsWith("/images")) {
+        return `${base}/${normalized.replace(/^images\//, "")}`;
       }
+      return `${base}/${normalized}`;
     }
-  });
+    return `${base}/${normalized}`;
+  }
+
+  return normalized;
 }
 
-function setImageSource(img, originalPath) {
-  if (!img || !originalPath) return;
-  bindImageFallback(img, originalPath);
-  img.src = resolveAssetPath(originalPath);
+function setImageSource(img, path) {
+  if (!img || !path) return;
+  img.dataset.originalPath = path;
+  img.src = resolveAssetPath(path);
 }
 
-function applyStaticAssetPaths() {
-  document.querySelectorAll('img[data-r2-src], img[src^="images/"]').forEach(img => {
-    const original = img.getAttribute("data-r2-src") || img.getAttribute("src");
+function applyStaticAssetPaths(scope = document) {
+  scope.querySelectorAll("img[data-r2-src]").forEach((img) => {
+    const original = img.getAttribute("data-r2-src");
     if (!original) return;
-    bindImageFallback(img, original);
-    img.src = resolveAssetPath(original);
+    setImageSource(img, original);
   });
 }
 
 function currentProduct() {
-  return state.products.find(p => p.id === state.currentProductId) || state.products[0];
+  return state.products.find((p) => p.id === state.currentProductId) || state.products[0] || null;
 }
 
 function getProductImage(product) {
+  if (!product) return "";
   if (state.mode === "truth" && product.imageTruth) return product.imageTruth;
   if (state.mode === "anomaly1" && product.id === "shiromimi" && product.imageAnomaly1) return product.imageAnomaly1;
   return product.image;
 }
 
 function getBackImage(product) {
+  if (!product) return "";
   if (product.id === "shiromimi") {
-    if (state.mode === "normal" || state.mode === "anomaly1") {
-      return product.anomaly1BackImage || product.backImage || product.image;
-    }
+    if (state.mode === "normal") return product.normalBackImage || product.backImage || product.image;
+    if (state.mode === "anomaly1") return product.anomaly1BackImage || product.backImage || product.image;
     return product.normalBackImage || product.backImage || product.image;
   }
   return product.backImage || product.image;
@@ -156,7 +144,7 @@ function closeSiteAlteredOverlay() {
 
 function runSiteAlteredOverlay(nextMode = null) {
   if (!els.noiseOverlay) {
-    if (typeof nextMode === "string" && nextMode) {
+    if (nextMode) {
       updateUrlMode(nextMode);
       setMode(nextMode);
     }
@@ -168,24 +156,27 @@ function runSiteAlteredOverlay(nextMode = null) {
 }
 
 function setMode(mode) {
-  closeSiteAlteredOverlay();
-  state.noiseNextMode = null;
   state.mode = mode;
   state.showingBack = false;
   state.anomaly3Clicks = 0;
-  els.body.dataset.mode = mode;
+  state.noiseNextMode = null;
+  closeSiteAlteredOverlay();
+  if (els.body) els.body.dataset.mode = mode;
+
   renderHeaderAndHero();
   renderProducts();
   renderDetail();
   renderNews();
   renderReviews();
   renderBrand();
+  applyStaticAssetPaths();
 }
 
 function renderHeaderAndHero() {
   const truth = state.mode === "truth";
-  if (els.siteLogo) setImageSource(els.siteLogo, truth ? "images/truth/img_logo_header_truth_600x160.png" : "images/ui/img_logo_header_600x160.png");
-  if (els.heroImage) setImageSource(els.heroImage, truth ? "images/truth/img_hero_collage_truth_1200x800.png" : "images/normal/img_hero_collage_1200x800.png");
+  setImageSource(els.siteLogo, truth ? "images/truth/img_logo_header_truth_600x160.png" : "images/ui/img_logo_header_600x160.png");
+  setImageSource(els.heroImage, truth ? "images/truth/img_hero_collage_truth_1200x800.png" : "images/normal/img_hero_collage_1200x800.png");
+
   if (truth) {
     document.title = "記録保管ページ";
     if (els.heroTitle) els.heroTitle.textContent = "これは販売ページではなく、記録の保管ページです。";
@@ -202,34 +193,35 @@ function renderHeaderAndHero() {
 function renderProducts() {
   if (!els.productGrid) return;
   els.productGrid.innerHTML = "";
-  state.products.forEach(product => {
+
+  state.products.forEach((product) => {
     const card = document.createElement("article");
     card.className = "product-card";
     const imgSrc = getProductImage(product);
     card.innerHTML = `
-      <img src="${resolveAssetPath(imgSrc)}" alt="${product.name}" data-fallback="${imgSrc}">
+      <img data-r2-src="${imgSrc}" alt="${product.name}">
       <div class="product-copy">
         <div class="meta"><span>${product.series || ""}</span><span>${product.price || ""}</span></div>
         <h3>${product.name || ""}</h3>
         <p>${state.mode === "truth" ? (product.craftTruth || "") : (product.tagline || "")}</p>
         <div class="product-actions">
-          <button class="mini-btn" data-view="${product.id}">詳細を見る</button>
+          <button class="mini-btn" type="button" data-view="${product.id}">詳細を見る</button>
         </div>
       </div>`;
     els.productGrid.appendChild(card);
   });
 
-  els.productGrid.querySelectorAll("img[data-fallback]").forEach(img => bindImageFallback(img, img.dataset.fallback));
-  els.productGrid.querySelectorAll("[data-view]").forEach(btn => {
-    btn.addEventListener("click", e => {
+  applyStaticAssetPaths(els.productGrid);
+
+  els.productGrid.querySelectorAll("[data-view]").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
       e.preventDefault();
       state.currentProductId = btn.dataset.view;
       state.showingBack = false;
       state.anomaly3Clicks = 0;
       renderProducts();
       renderDetail();
-      const detail = document.getElementById("detail");
-      if (detail) detail.scrollIntoView({behavior:"smooth", block:"start"});
+      document.getElementById("detail")?.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   });
 }
@@ -241,6 +233,7 @@ function renderDetail() {
   if (els.detailSeries) els.detailSeries.textContent = product.series || "";
   if (els.detailName) els.detailName.textContent = product.name || "";
   if (els.detailPrice) els.detailPrice.textContent = product.price || "";
+
   if (els.detailDescription) {
     els.detailDescription.textContent = state.mode === "truth"
       ? (product.craftTruth || product.description || "")
@@ -248,7 +241,7 @@ function renderDetail() {
   }
 
   if (els.detailBirthplace) {
-    els.detailBirthplace.classList.remove("birthplace-dogear","revealed-place");
+    els.detailBirthplace.classList.remove("birthplace-dogear", "revealed-place");
     if (state.mode === "anomaly3") {
       els.detailBirthplace.classList.add("birthplace-dogear");
       if (state.anomaly3Clicks >= 5) {
@@ -272,32 +265,27 @@ function renderDetail() {
     }
   }
 
-  let imgSrc = getProductImage(product);
-  if (state.showingBack) imgSrc = getBackImage(product);
-
+  const imagePath = state.showingBack ? getBackImage(product) : getProductImage(product);
+  setImageSource(els.detailImage, imagePath);
   if (els.detailImage) {
-    setImageSource(els.detailImage, imgSrc);
     els.detailImage.alt = state.showingBack ? `${product.name}の裏面` : product.name;
   }
 
-  if (els.toggleBackBtn) els.toggleBackBtn.textContent = state.showingBack ? "表面に戻す" : "裏面を見る";
-  if (els.openCraftBtn) els.openCraftBtn.style.display = "none";
-  if (els.craftPanel) {
-    els.craftPanel.classList.add("hidden");
-    els.craftPanel.style.display = "none";
+  if (els.toggleBackBtn) {
+    els.toggleBackBtn.textContent = state.showingBack ? "表面に戻す" : "裏面を見る";
   }
 }
 
 function renderNews() {
   if (!els.newsList || !state.news) return;
   const items = state.mode === "truth" ? state.news.truth : state.news.normal;
-  els.newsList.innerHTML = items.map(item => `<article class="news-item"><time>${item.date}</time><p>${item.title}</p></article>`).join("");
+  els.newsList.innerHTML = items.map((item) => `<article class="news-item"><time>${item.date}</time><p>${item.title}</p></article>`).join("");
 }
 
 function renderReviews() {
   if (!els.reviewList || !state.reviews) return;
   const items = state.mode === "truth" ? state.reviews.truth : state.reviews.normal;
-  els.reviewList.innerHTML = items.map(item => `<article class="review-card"><h3>${item.name}</h3><p>${item.text}</p></article>`).join("");
+  els.reviewList.innerHTML = items.map((item) => `<article class="review-card"><h3>${item.name}</h3><p>${item.text}</p></article>`).join("");
 }
 
 function renderBrand() {
@@ -312,106 +300,94 @@ function renderBrand() {
 }
 
 function bindEvents() {
-  if (els.noiseOverlay) {
-    els.noiseOverlay.addEventListener("click", () => {
-      const nextMode = state.noiseNextMode;
-      state.noiseNextMode = null;
-      closeSiteAlteredOverlay();
-      if (typeof nextMode === "string" && nextMode) {
-        updateUrlMode(nextMode);
-        setMode(nextMode);
-      }
-    });
-  }
+  els.noiseOverlay?.addEventListener("click", () => {
+    const nextMode = state.noiseNextMode;
+    closeSiteAlteredOverlay();
+    state.noiseNextMode = null;
+    if (nextMode) {
+      updateUrlMode(nextMode);
+      setMode(nextMode);
+    }
+  });
 
-  if (els.toggleBackBtn) {
-    els.toggleBackBtn.addEventListener("click", e => {
-      e.preventDefault();
-      state.showingBack = !state.showingBack;
-      renderDetail();
-    });
-  }
+  els.toggleBackBtn?.addEventListener("click", (e) => {
+    e.preventDefault();
+    state.showingBack = !state.showingBack;
+    renderDetail();
+  });
 
-  if (els.detailImage) {
-    els.detailImage.addEventListener("click", () => {
-      const product = currentProduct();
-      if (!product || !state.showingBack) return;
-      if (product.id === "shiromimi" && (state.mode === "normal" || state.mode === "anomaly1")) {
-        runSiteAlteredOverlay("anomaly2");
-      }
-    });
-  }
+  els.detailImage?.addEventListener("click", () => {
+    const product = currentProduct();
+    if (!product || !state.showingBack) return;
+    if (product.id === "shiromimi" && state.mode === "anomaly1") {
+      runSiteAlteredOverlay("anomaly2");
+    }
+  });
 
-  if (els.detailCraft) {
-    els.detailCraft.addEventListener("click", () => {
-      if (state.mode !== "anomaly2") return;
+  els.detailCraft?.addEventListener("click", () => {
+    if (state.mode === "anomaly2") {
       runSiteAlteredOverlay("anomaly3");
-    });
-  }
+    }
+  });
 
-  if (els.detailBirthplace) {
-    els.detailBirthplace.addEventListener("click", () => {
-      if (state.mode !== "anomaly3") return;
-      if (state.anomaly3Clicks < 5) {
-        state.anomaly3Clicks += 1;
-        renderDetail();
-        return;
-      }
-      runSiteAlteredOverlay("truth");
-    });
-  }
+  els.detailBirthplace?.addEventListener("click", () => {
+    if (state.mode !== "anomaly3") return;
+    if (state.anomaly3Clicks < 5) {
+      state.anomaly3Clicks += 1;
+      renderDetail();
+      return;
+    }
+    runSiteAlteredOverlay("truth");
+  });
 
-  if (els.searchForm) {
-    els.searchForm.addEventListener("submit", e => {
-      e.preventDefault();
-      const q = (els.searchInput?.value || "").trim().toLowerCase();
-      if (!q) {
-        if (els.searchMessage) els.searchMessage.textContent = "検索語を入力してください。";
-        return;
-      }
-      const product = state.products.find(p => (p.name || "").includes(q) || (p.id || "").includes(q));
-      if (product) {
-        state.currentProductId = product.id;
-        state.showingBack = false;
-        state.anomaly3Clicks = 0;
-        renderProducts();
-        renderDetail();
-        const detail = document.getElementById("detail");
-        if (detail) detail.scrollIntoView({behavior:"smooth", block:"start"});
-        if (els.searchMessage) els.searchMessage.textContent = `「${product.name}」を表示しました。`;
-      } else {
-        if (els.searchMessage) els.searchMessage.textContent = `「${els.searchInput.value}」に一致する商品は見つかりませんでした。`;
-      }
-    });
-  }
+  els.searchForm?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const q = (els.searchInput?.value || "").trim().toLowerCase();
+    if (!q) {
+      if (els.searchMessage) els.searchMessage.textContent = "検索語を入力してください。";
+      return;
+    }
 
-  if (els.shareBtn) {
-    els.shareBtn.addEventListener("click", () => {
-      const config = window.SHARE_CONFIG || {};
-      const text = `${config.shareText || ""}\n${config.originTweetUrl || location.href}`.trim();
-      const url = `https://x.com/intent/tweet?text=${encodeURIComponent(text)}`;
-      window.open(url, "_blank", "noopener,noreferrer");
-    });
-  }
+    const product = state.products.find((p) => (p.name || "").toLowerCase().includes(q) || (p.id || "").toLowerCase().includes(q));
+    if (!product) {
+      if (els.searchMessage) els.searchMessage.textContent = `「${els.searchInput.value}」に一致する商品は見つかりませんでした。`;
+      return;
+    }
+
+    state.currentProductId = product.id;
+    state.showingBack = false;
+    state.anomaly3Clicks = 0;
+    renderProducts();
+    renderDetail();
+    document.getElementById("detail")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (els.searchMessage) els.searchMessage.textContent = `「${product.name}」を表示しました。`;
+  });
+
+  els.shareBtn?.addEventListener("click", () => {
+    const config = window.SHARE_CONFIG || {};
+    const text = `${config.shareText || ""}\n${config.originTweetUrl || location.href}`.trim();
+    const shareUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(text)}`;
+    window.open(shareUrl, "_blank", "noopener,noreferrer");
+  });
 
   window.addEventListener("popstate", () => setMode(getModeFromUrl()));
 }
 
-window.inspectOverlayDom = function () {
+window.inspectOverlayDom = function inspectOverlayDom() {
   return {
     noiseOverlayCount: document.querySelectorAll("#noise-overlay").length,
-    noiseMessageCount: document.querySelectorAll("#noise-message").length,
-    overlayAria: document.getElementById("noise-overlay") ? document.getElementById("noise-overlay").getAttribute("aria-hidden") : null
+    overlayActive: document.getElementById("noise-overlay")?.classList.contains("is-active") || false,
+    overlayAria: document.getElementById("noise-overlay")?.getAttribute("aria-hidden") || null
   };
 };
 
-window.inspectImageSources = function () {
-  return Array.from(document.querySelectorAll("img")).map(img => ({
+window.inspectImageSources = function inspectImageSources() {
+  return Array.from(document.querySelectorAll("img")).map((img) => ({
     alt: img.alt || "",
-    src: img.getAttribute("src"),
-    dataR2Src: img.getAttribute("data-r2-src"),
-    resolved: img.currentSrc || img.src,
-    isR2: /r2\.dev/i.test(img.currentSrc || img.src || ""),
-    r2Error: img.dataset.r2Error || null
+    dataR2Src: img.getAttribute("data-r2-src") || "",
+    currentSrcAttr: img.getAttribute("src") || "",
+    resolved: img.currentSrc || img.src || "",
+    isProxy: (img.currentSrc || img.src || "").includes("/r2/"),
+    isR2Direct: (img.currentSrc || img.src || "").includes(".r2.dev")
   }));
 };

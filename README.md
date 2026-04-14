@@ -205,5 +205,6 @@ document.getElementById("detail-image").src
 
 
 ## 修正
-- 旧 overlay CSS を削除し、#noise-overlay 配下だけに効く scoped CSS へ置換
-- 初期状態で noise-message が見え続ける問題を修正
+- overlay DOM/CSS を完全整理
+- R2画像参照を `images/...` 配下そのまま連結する方式に修正
+- 初期表示の常時テキストと、R2画像が出ない問題を修正

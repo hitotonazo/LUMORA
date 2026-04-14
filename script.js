@@ -77,21 +77,38 @@ function updateUrlMode(mode) {
 }
 
 function resolveAssetPath(path) {
-  if (!path || !state.config || !state.config.useR2) return path;
-  const publicBase = (state.config.r2PublicBase || "").replace(/\/$/, "");
+  if (!path) return path;
+  if (/^(https?:)?\/\//.test(path) || path.startsWith("data:")) return path;
+  if (!state.config || !state.config.useR2) return path;
+
+  const publicBase = String(state.config.r2PublicBase || "").replace(/\/$/, "");
   if (!publicBase) return path;
-  if (path.startsWith("images/")) {
-    return `${publicBase}/${path.replace(/^images\//, "")}`;
+
+  const normalizedPath = String(path).replace(/^\.\//, "");
+  const baseEndsWithImages = /\/images$/i.test(publicBase);
+
+  if (normalizedPath.startsWith("images/")) {
+    const trimmed = normalizedPath.replace(/^images\//, "");
+    return baseEndsWithImages
+      ? `${publicBase}/${trimmed}`
+      : `${publicBase}/${normalizedPath}`;
   }
-  return path;
+
+  return `${publicBase}/${normalizedPath}`;
 }
 
 function bindImageFallback(img, fallback) {
-  if (!img || !fallback || img.dataset.fallbackBound === "1") return;
+  if (!img || img.dataset.fallbackBound === "1") return;
   img.dataset.fallbackBound = "1";
   img.addEventListener("error", () => {
-    if (state.config?.useLocalFallback && img.src !== new URL(fallback, location.href).href) {
-      img.src = fallback;
+    const failedSrc = img.currentSrc || img.src || "";
+    img.dataset.r2Error = failedSrc;
+    console.warn("R2 image load failed:", failedSrc, "fallback:", fallback || "(none)");
+    if (state.config?.useLocalFallback && fallback) {
+      const localFallback = new URL(fallback, location.href).href;
+      if (img.src !== localFallback) {
+        img.src = fallback;
+      }
     }
   });
 }
@@ -103,8 +120,8 @@ function setImageSource(img, originalPath) {
 }
 
 function applyStaticAssetPaths() {
-  document.querySelectorAll('img[src^="images/"]').forEach(img => {
-    const original = img.getAttribute("src");
+  document.querySelectorAll('img[data-r2-src], img[src^="images/"]').forEach(img => {
+    const original = img.getAttribute("data-r2-src") || img.getAttribute("src");
     if (!original) return;
     bindImageFallback(img, original);
     img.src = resolveAssetPath(original);
@@ -389,9 +406,12 @@ window.inspectOverlayDom = function () {
 };
 
 window.inspectImageSources = function () {
-  return Array.from(document.querySelectorAll('img')).map(img => ({
+  return Array.from(document.querySelectorAll("img")).map(img => ({
     alt: img.alt || "",
     src: img.getAttribute("src"),
-    resolved: img.src
+    dataR2Src: img.getAttribute("data-r2-src"),
+    resolved: img.currentSrc || img.src,
+    isR2: /r2\.dev/i.test(img.currentSrc || img.src || ""),
+    r2Error: img.dataset.r2Error || null
   }));
 };

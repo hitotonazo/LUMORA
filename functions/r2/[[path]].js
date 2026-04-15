@@ -1,11 +1,12 @@
 export async function onRequest(context) {
-  const requestUrl = new URL(context.request.url);
-  const path = Array.isArray(context.params.path)
-    ? context.params.path.join("/")
-    : String(context.params.path || "");
+  const pathValue = context.params.path;
+  const path = Array.isArray(pathValue)
+    ? pathValue.join("/")
+    : String(pathValue || "");
 
   const base = "https://pub-12f05472082049758097370dd8aaab52.r2.dev";
   const upstreamUrl = `${base}/${path.replace(/^\/+/, "")}`;
+
   const upstream = await fetch(upstreamUrl, {
     cf: { cacheEverything: true, cacheTtl: 3600 }
   });
@@ -20,5 +21,9 @@ export async function onRequest(context) {
   const headers = new Headers(upstream.headers);
   headers.set("Cache-Control", "public, max-age=3600");
   headers.set("Access-Control-Allow-Origin", "*");
-  return new Response(upstream.body, { status: upstream.status, headers });
+
+  return new Response(upstream.body, {
+    status: upstream.status,
+    headers
+  });
 }

@@ -307,6 +307,7 @@ function bindEvents() {
     if (nextMode) {
       updateUrlMode(nextMode);
       setMode(nextMode);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   });
 
@@ -316,10 +317,11 @@ function bindEvents() {
 
     if (product?.id === "shiromimi" && state.mode === "normal" && !state.showingBack) {
       state.mode = "anomaly1";
-      updateUrlMode("anomaly1");
-      if (els.body) els.body.dataset.mode = "anomaly1";
+      state.currentProductId = "shiromimi";
       state.showingBack = true;
       state.anomaly3Clicks = 0;
+      updateUrlMode("anomaly1");
+      if (els.body) els.body.dataset.mode = "anomaly1";
       renderHeaderAndHero();
       renderProducts();
       renderDetail();
@@ -327,6 +329,13 @@ function bindEvents() {
       renderReviews();
       renderBrand();
       applyStaticAssetPaths();
+      if (els.detailImage) {
+        setImageSource(els.detailImage, product.anomaly1BackImage || product.backImage || product.image);
+        els.detailImage.alt = `${product.name}の裏面`;
+      }
+      if (els.toggleBackBtn) {
+        els.toggleBackBtn.textContent = "表面に戻す";
+      }
       return;
     }
 

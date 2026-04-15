@@ -474,3 +474,31 @@ body[data-mode="anomaly3"] #detail-birthplace.revealed-place{color:#7c0606;font-
     line-height: 1.5;
   }
 }
+
+
+#noise-overlay .noise-sub {
+  position: absolute;
+  left: 50%;
+  top: calc(50% + 64px);
+  transform: translateX(-50%);
+  z-index: 11;
+  width: min(88vw, 760px);
+  padding: 0 16px;
+  text-align: center;
+  color: rgba(45, 20, 20, 0.88);
+  font-size: clamp(0.95rem, 1.5vw, 1.1rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.4);
+  pointer-events: none;
+}
+#noise-overlay[aria-hidden="true"] .noise-sub {
+  opacity: 0 !important;
+}
+@media (max-width: 760px) {
+  #noise-overlay .noise-sub {
+    top: calc(50% + 72px);
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+}

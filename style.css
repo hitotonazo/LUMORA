@@ -502,3 +502,78 @@ body[data-mode="anomaly3"] #detail-birthplace.revealed-place{color:#7c0606;font-
     line-height: 1.6;
   }
 }
+
+
+/* ===== 違和感①：しろみみ背面の切り口に黒い靄 ===== */
+.detail-media {
+  position: relative;
+  overflow: hidden;
+}
+
+.detail-media.anomaly1-fog::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  background:
+    radial-gradient(
+      ellipse 90px 150px at 58% 48%,
+      rgba(0, 0, 0, 0.00) 0%,
+      rgba(0, 0, 0, 0.18) 18%,
+      rgba(0, 0, 0, 0.42) 38%,
+      rgba(0, 0, 0, 0.62) 54%,
+      rgba(0, 0, 0, 0.28) 72%,
+      rgba(0, 0, 0, 0.00) 100%
+    ),
+    radial-gradient(
+      ellipse 120px 200px at 54% 52%,
+      rgba(20, 20, 20, 0.00) 0%,
+      rgba(20, 20, 20, 0.12) 26%,
+      rgba(20, 20, 20, 0.22) 50%,
+      rgba(20, 20, 20, 0.00) 100%
+    );
+  filter: blur(10px);
+  opacity: 0.95;
+  animation: anomalyFogPulse 3.2s ease-in-out infinite;
+  mix-blend-mode: multiply;
+}
+
+.detail-media.anomaly1-fog::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+  background:
+    radial-gradient(
+      ellipse 70px 110px at 59% 49%,
+      rgba(0, 0, 0, 0.00) 0%,
+      rgba(25, 25, 25, 0.24) 35%,
+      rgba(0, 0, 0, 0.58) 58%,
+      rgba(0, 0, 0, 0.00) 100%
+    );
+  filter: blur(16px);
+  opacity: 0.7;
+  animation: anomalyFogDrift 5.5s ease-in-out infinite;
+}
+
+@keyframes anomalyFogPulse {
+  0%, 100% {
+    transform: scale(1) translate(0, 0);
+    opacity: 0.82;
+  }
+  50% {
+    transform: scale(1.04) translate(-4px, 3px);
+    opacity: 1;
+  }
+}
+
+@keyframes anomalyFogDrift {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(6px, -4px);
+  }
+}

@@ -312,6 +312,24 @@ function bindEvents() {
 
   els.toggleBackBtn?.addEventListener("click", (e) => {
     e.preventDefault();
+    const product = currentProduct();
+
+    if (product?.id === "shiromimi" && state.mode === "normal" && !state.showingBack) {
+      state.mode = "anomaly1";
+      updateUrlMode("anomaly1");
+      if (els.body) els.body.dataset.mode = "anomaly1";
+      state.showingBack = true;
+      state.anomaly3Clicks = 0;
+      renderHeaderAndHero();
+      renderProducts();
+      renderDetail();
+      renderNews();
+      renderReviews();
+      renderBrand();
+      applyStaticAssetPaths();
+      return;
+    }
+
     state.showingBack = !state.showingBack;
     renderDetail();
   });

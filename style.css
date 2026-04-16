@@ -725,3 +725,26 @@ body[data-mode="anomaly3"] #detail-birthplace.revealed-place{color:#7c0606;font-
   50%  { transform: translate(2px,-2px); }
   100% { transform: translate(-2px,2px); }
 }
+
+
+/* anomaly2 readable */
+ 
+.anomaly2-text {
+  color: #b30000;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1.8;
+  text-shadow:
+    0 0 2px rgba(0,0,0,0.6),
+    0 0 4px rgba(0,0,0,0.4);
+  filter: contrast(1.1);
+  animation: textGlitch 2.5s infinite;
+}
+
+@keyframes textGlitch {
+  0%   { transform: translate(0,0); }
+  48%  { transform: translate(0,0); }
+  50%  { transform: translate(0.5px,-0.5px); }
+  52%  { transform: translate(-0.5px,0.5px); }
+  100% { transform: translate(0,0); }
+}

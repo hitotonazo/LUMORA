@@ -170,19 +170,38 @@ function setMode(mode) {
   renderReviews();
   renderBrand();
   applyStaticAssetPaths();
-  updateAnomaly1Fog();
+  updateAnomaly1Mosaic();
+}
+
+function updateAnomaly1Mosaic() {
+  const el =
+    document.querySelector(".product-visual") ||
+    document.querySelector(".detail-visual") ||
+    document.querySelector(".product-detail-visual") ||
+    document.querySelector(".detail-image-wrap") ||
+    document.querySelector(".product-image-wrap") ||
+    document.querySelector(".detail-media");
+
+  if (!el) return;
+
+  const currentId =
+    state.currentProductId ||
+    state.activeProductId ||
+    state.selectedProductId ||
+    "";
+
+  const isShiromimi = currentId === "shiromimi";
+  const isBack = (state.isBackView === true) || (state.showingBack === true);
+  const isA1 = state.mode === "anomaly1";
+
+  el.classList.toggle(
+    "anomaly1-mosaic",
+    isShiromimi && isBack && isA1
+  );
 }
 
 function updateAnomaly1Fog() {
-  const visual = document.querySelector('.detail-media');
-  if (!visual) return;
-
-  const product = currentProduct();
-  const isShiromimi = product?.id === 'shiromimi';
-  const isBackView = state.showingBack === true;
-  const isAnomaly1 = state.mode === 'anomaly1';
-
-  visual.classList.toggle('anomaly1-fog', Boolean(isShiromimi && isBackView && isAnomaly1));
+  updateAnomaly1Mosaic();
 }
 
 function renderHeaderAndHero() {
@@ -342,7 +361,7 @@ function bindEvents() {
       renderReviews();
       renderBrand();
       applyStaticAssetPaths();
-      updateAnomaly1Fog();
+      updateAnomaly1Mosaic();
       if (els.detailImage) {
         setImageSource(els.detailImage, product.anomaly1BackImage || product.backImage || product.image);
         els.detailImage.alt = `${product.name}の裏面`;
@@ -355,7 +374,7 @@ function bindEvents() {
 
     state.showingBack = !state.showingBack;
     renderDetail();
-    updateAnomaly1Fog();
+    updateAnomaly1Mosaic();
   });
 
   els.detailImage?.addEventListener("click", () => {

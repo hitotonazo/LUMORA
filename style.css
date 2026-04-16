@@ -656,3 +656,60 @@ body[data-mode="anomaly3"] #detail-birthplace.revealed-place{color:#7c0606;font-
     transform: translate(-7px, 3px);
   }
 }
+
+
+/* ===== 違和感①：モザイク隠し（左寄せ） ===== */
+
+.product-visual,
+.detail-visual,
+.product-detail-visual,
+.detail-image-wrap,
+.product-image-wrap,
+.detail-media {
+  position: relative;
+  overflow: hidden;
+}
+
+.anomaly1-mosaic::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+
+  /* モザイク本体 */
+  background:
+    radial-gradient(
+      ellipse 140px 180px at 52% 48%,
+      rgba(0,0,0,0) 0%,
+      rgba(0,0,0,0.9) 35%,
+      rgba(0,0,0,0.95) 55%,
+      rgba(0,0,0,0.0) 100%
+    ),
+    repeating-linear-gradient(
+      0deg,
+      rgba(0,0,0,0.9) 0px,
+      rgba(0,0,0,0.9) 8px,
+      rgba(20,20,20,0.9) 8px,
+      rgba(20,20,20,0.9) 16px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(0,0,0,0.9) 0px,
+      rgba(0,0,0,0.9) 8px,
+      rgba(30,30,30,0.9) 8px,
+      rgba(30,30,30,0.9) 16px
+    );
+
+  mix-blend-mode: multiply;
+  opacity: 0.95;
+
+  /* カクつき */
+  animation: mosaicJitter 0.6s steps(2) infinite;
+}
+
+@keyframes mosaicJitter {
+  0%   { transform: translate(0,0); }
+  50%  { transform: translate(2px,-2px); }
+  100% { transform: translate(-2px,2px); }
+}

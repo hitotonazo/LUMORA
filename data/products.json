@@ -15,7 +15,7 @@
     "craftTruth": "表情を整えるため、目元の位置を固定し、内部を丁寧に詰め直します。",
     "normalBackImage": "images/anomaly1/img_product_shiromimi_back_800x800.png",
     "anomaly1BackImage": "images/anomaly1/img_product_shiromimi_eye_800x800.png",
-    "foundPlace": "××市 篝森山 四合目",
+    "foundPlace": "群馬県沼田市 篝森山 四合目",
     "anomaly2Craft": "口部を縫い開き、対象者の四肢を折りたたんだのち綿材で外観を補正します。"
   },
   {
@@ -31,7 +31,7 @@
     "backImage": "images/anomaly1/img_product_morikuma_back_800x800.png",
     "craftNormal": "やわらかな生地を重ね、丸みのある形に整えています。",
     "craftTruth": "形を崩さないよう縫い目を増やし、内部の固定を強めています。",
-    "foundPlace": "××市 裏見林道終点付近",
+    "foundPlace": "栃木県日光市 裏見林道終点付近",
     "anomaly2Craft": "内部骨格を抜き取り、腹部へ対象者を挿入後、縫合線が目立たないよう毛並みで隠します。"
   },
   {
@@ -47,7 +47,7 @@
     "backImage": "images/anomaly1/img_product_koroneko_back_800x800.png",
     "craftNormal": "毛並みの流れを意識しながら、なめらかに縫製しています。",
     "craftTruth": "表面を整えたあと、不要なズレが出ないよう再固定します。",
-    "foundPlace": "××市 旧道脇排水溝付近",
+    "foundPlace": "東京都青梅市 旧道脇排水溝付近",
     "anomaly2Craft": "小型個体のため関節を逆向きに折り、頭部から順に詰め込んだあと首元を再固定します。"
   },
   {

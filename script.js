@@ -128,9 +128,12 @@ function getProductImage(product) {
 
 function getBackImage(product) {
   if (!product) return "";
+  if (state.mode === "truth" && product.truthBackImage) {
+    return product.truthBackImage;
+  }
   if (product.id === "shiromimi") {
     if (state.mode === "normal") return product.normalBackImage || product.backImage || product.image;
-    if (state.mode === "anomaly1" || state.mode === "truth") return product.anomaly1BackImage || product.backImage || product.image;
+    if (state.mode === "anomaly1") return product.anomaly1BackImage || product.backImage || product.image;
     return product.normalBackImage || product.backImage || product.image;
   }
   return product.backImage || product.image;
@@ -252,10 +255,11 @@ function renderProducts() {
     btn.addEventListener("click", (e) => {
       e.preventDefault();
       state.currentProductId = btn.dataset.view;
-      state.showingBack = false;
-      state.anomaly3Clicks = 0;
+      state.showingBack = state.mode === "truth";
+      state.anomaly3Clicks = state.mode === "truth" ? 5 : 0;
       renderProducts();
       renderDetail();
+      updateAnomaly1Mosaic();
       document.getElementById("detail")?.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   });

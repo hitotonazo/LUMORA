@@ -1,0 +1,15 @@
+{
+  "bucket_root": "images",
+  "upload_targets": [
+    "truth/back/img_product_hoshiumi_back_truth_800x800.png",
+    "truth/back/img_product_koroneko_back_truth_800x800.png",
+    "truth/back/img_product_morikuma_back_truth_800x800.png",
+    "truth/back/img_product_shiromimi_back_truth_800x800.png",
+    "truth/back/img_product_yoruneko_back_truth_800x800.png"
+  ],
+  "notes": [
+    "Upload the files under r2-upload/images/ into your public R2 bucket's images/ prefix.",
+    "If you keep the current config, /functions/r2/[[path]].js proxies to the public bucket root.",
+    "Truth mode uses truthBackImage for each plush back view."
+  ]
+}

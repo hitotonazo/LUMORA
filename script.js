@@ -314,10 +314,39 @@ function renderNews() {
   els.newsList.innerHTML = items.map((item) => `<article class="news-item"><time>${item.date}</time><p>${item.title}</p></article>`).join("");
 }
 
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 function renderReviews() {
   if (!els.reviewList || !state.reviews) return;
   const items = state.mode === "truth" ? state.reviews.truth : state.reviews.normal;
-  els.reviewList.innerHTML = items.map((item) => `<article class="review-card"><h3>${item.name}</h3><p>${item.text}</p></article>`).join("");
+  els.reviewList.innerHTML = items.map((item) => {
+    const purchaser = escapeHtml(item.name);
+    const body = escapeHtml(item.text);
+    const title = escapeHtml(item.title || item.name);
+    const stars = item.stars || "★★★★★";
+    const date = item.date ? `<span class="review-date">${escapeHtml(item.date)}</span>` : "";
+    const reply = item.reply
+      ? `<div class="review-reply">${escapeHtml(item.reply)}</div>`
+      : "";
+
+    return `
+      <article class="review-card review-thread-card">
+        <div class="review-main">
+          <h3 class="review-title">${title}</h3>
+          <div class="review-stars" aria-label="${stars}">${stars}</div>
+          <p class="review-body">${body}</p>
+          <div class="review-meta">購入者：<strong>${purchaser}</strong>${date}</div>
+          ${reply}
+        </div>
+      </article>`;
+  }).join("");
 }
 
 function renderBrand() {

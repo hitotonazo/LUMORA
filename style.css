@@ -754,3 +754,92 @@ body[data-mode="anomaly3"] #detail-birthplace.revealed-place{color:#7c0606;font-
   52%  { transform: translate(-0.5px,0.5px); }
   100% { transform: translate(0,0); }
 }
+
+
+/* ===== レビュー：画像なしコメント一覧風レイアウト ===== */
+.review-list{
+  display:grid;
+  gap:20px;
+}
+
+.review-thread-card{
+  display:block;
+  padding:24px 26px;
+  border:1px solid #e6ddd4;
+  border-radius:0;
+  background:#fff;
+  box-shadow:none;
+}
+
+.review-main{display:block}
+
+.review-title{
+  margin:0 0 8px;
+  color:#2d79b8;
+  font-size:18px;
+  font-weight:700;
+  line-height:1.5;
+}
+
+.review-stars{
+  margin:0 0 14px;
+  color:#f39a00;
+  letter-spacing:0.14em;
+  font-size:20px;
+  line-height:1;
+}
+
+.review-body{
+  margin:0;
+  color:#2f2a25;
+  font-size:15px;
+  line-height:1.9;
+}
+
+.review-meta{
+  margin-top:14px;
+  text-align:right;
+  color:#7e7469;
+  font-size:13px;
+  line-height:1.6;
+}
+
+.review-meta strong{
+  color:#2f2a25;
+  font-weight:700;
+}
+
+.review-date{
+  margin-left:8px;
+  color:#aaa096;
+}
+
+.review-reply{
+  position:relative;
+  margin-top:16px;
+  padding:16px 18px;
+  background:#f5f2ee;
+  border-radius:10px;
+  color:#51483f;
+  font-size:14px;
+  line-height:1.8;
+}
+
+.review-reply::before{
+  content:"";
+  position:absolute;
+  top:-10px;
+  left:24px;
+  width:18px;
+  height:18px;
+  background:#f5f2ee;
+  transform:rotate(45deg);
+}
+
+@media (max-width: 768px){
+  .review-thread-card{padding:18px 16px}
+  .review-title{font-size:17px}
+  .review-stars{font-size:18px}
+  .review-body{font-size:14px; line-height:1.8}
+  .review-meta{text-align:left}
+}

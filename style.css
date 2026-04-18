@@ -249,7 +249,8 @@ body.stage-anomaly2 h2 {
 #noise-overlay.is-active #open-craft-btn{display:none !important;}
 #craft-panel{display:none !important;}
 
-body[data-mode="anomaly2"] #detail-craft{
+body[data-mode="anomaly2"] #detail-craft,
+body[data-mode="truth"] #detail-craft{
   color:#7c0606 !important;
   font-weight:900;
   cursor:pointer;
@@ -262,7 +263,8 @@ body[data-mode="anomaly2"] #detail-craft{
     0 3px 6px rgba(60,0,0,0.95),
     0 0 16px rgba(120,0,0,0.7);
 }
-body[data-mode="anomaly2"] #detail-craft::after{content:"　▶";}
+body[data-mode="anomaly2"] #detail-craft::after,
+body[data-mode="truth"] #detail-craft::after{content:"　▶";}
 
 .birthplace-dogear{position:relative;padding-right:18px;cursor:pointer;}
 .birthplace-dogear::after{
@@ -270,7 +272,8 @@ body[data-mode="anomaly2"] #detail-craft::after{content:"　▶";}
   background:linear-gradient(135deg, rgba(255,255,255,.96) 0 49%, rgba(140,110,110,.45) 50% 51%, rgba(235,225,220,.95) 52% 100%);
   border-left:1px solid rgba(170,160,155,.9);border-bottom:1px solid rgba(170,160,155,.9);
 }
-body[data-mode="anomaly3"] #detail-birthplace.revealed-place{color:#7c0606;font-weight:800;}
+body[data-mode="anomaly3"] #detail-birthplace.revealed-place,
+body[data-mode="truth"] #detail-birthplace.revealed-place{color:#7c0606;font-weight:800;}
 
 .noise-overlay {
   position: fixed; inset: 0; z-index: 9999; overflow: hidden; isolation: isolate;
@@ -843,13 +846,3 @@ body[data-mode="anomaly3"] #detail-birthplace.revealed-place{color:#7c0606;font-
   .review-body{font-size:14px; line-height:1.8}
   .review-meta{text-align:left}
 }
-
-
-.truth-summary{margin-top:18px;padding:16px 18px;border:1px solid var(--line);border-radius:18px;background:#fffaf7}
-.truth-summary-head{font-weight:800;margin-bottom:10px}
-.truth-summary-list{margin:0;padding-left:1.2em;display:grid;gap:10px}
-.truth-summary-list li{line-height:1.8}
-.review-stars[aria-label="記録"], .review-stars{letter-spacing:.08em}
-body[data-mode="truth"] .truth-summary{background:var(--truth-surface);border-color:var(--truth-line);color:var(--truth-text)}
-body[data-mode="truth"] .truth-summary-head{color:#ffb5c1}
-body[data-mode="truth"] .truth-summary-list li{color:var(--truth-muted)}

@@ -25,7 +25,6 @@ const els = {
   detailDescription: document.getElementById("detail-description"),
   detailBirthplace: document.getElementById("detail-birthplace"),
   detailCraft: document.getElementById("detail-craft"),
-  truthSummary: document.getElementById("truth-summary"),
   detailImage: document.getElementById("detail-image"),
   newsList: document.getElementById("news-list"),
   reviewList: document.getElementById("review-list"),
@@ -131,7 +130,7 @@ function getBackImage(product) {
   if (!product) return "";
   if (product.id === "shiromimi") {
     if (state.mode === "normal") return product.normalBackImage || product.backImage || product.image;
-    if (state.mode === "anomaly1") return product.anomaly1BackImage || product.backImage || product.image;
+    if (state.mode === "anomaly1" || state.mode === "truth") return product.anomaly1BackImage || product.backImage || product.image;
     return product.normalBackImage || product.backImage || product.image;
   }
   return product.backImage || product.image;
@@ -158,10 +157,13 @@ function runSiteAlteredOverlay(nextMode = null) {
 
 function setMode(mode) {
   state.mode = mode;
-  state.showingBack = false;
-  state.anomaly3Clicks = 0;
+  state.showingBack = mode === "truth";
+  state.anomaly3Clicks = mode === "truth" ? 5 : 0;
   state.noiseNextMode = null;
   closeSiteAlteredOverlay();
+  if (mode === "truth" && state.currentProductId !== "shiromimi") {
+    state.currentProductId = "shiromimi";
+  }
   if (els.body) els.body.dataset.mode = mode;
 
   renderHeaderAndHero();
@@ -193,7 +195,7 @@ function updateAnomaly1Mosaic() {
 
   const isShiromimi = currentId === "shiromimi";
   const isBack = (state.isBackView === true) || (state.showingBack === true);
-  const isA1 = state.mode === "anomaly1";
+  const isA1 = state.mode === "anomaly1" || state.mode === "truth";
 
   el.classList.toggle(
     "anomaly1-mosaic",
@@ -205,22 +207,6 @@ function updateAnomaly1Fog() {
   updateAnomaly1Mosaic();
 }
 
-function buildTruthSummary(product) {
-  if (!product) return "";
-  const clue1 = product.id === "shiromimi"
-    ? "違和感①：裏面に隠されていた切り口と目元の異常は、外見を整えて別のものに見せるための痕跡でした。"
-    : "違和感①：裏面の不自然な縫合と隠された箇所は、内部に別のものを収めた痕跡でした。";
-  const clue2 = `違和感②：制作方法の文は比喩ではなく、${product.anomaly2Craft || product.craftTruth || "対象物を加工して外観を整える手順"}という意味でした。`;
-  const clue3 = `違和感③：出身地として表示されていた情報は出生地ではなく、最後に確認された地点です。記録上の場所は「${product.foundPlace || product.birthplace || "不明"}」です。`;
-  return `
-    <div class="truth-summary-head">このページで明らかになったこと</div>
-    <ul class="truth-summary-list">
-      <li>${clue1}</li>
-      <li>${clue2}</li>
-      <li>${clue3}</li>
-    </ul>`;
-}
-
 function renderHeaderAndHero() {
   const truth = state.mode === "truth";
   setImageSource(els.siteLogo, truth ? "images/truth/img_logo_header_truth_600x160.png" : "images/ui/img_logo_header_600x160.png");
@@ -229,7 +215,7 @@ function renderHeaderAndHero() {
   if (truth) {
     document.title = "記録保管ページ";
     if (els.heroTitle) els.heroTitle.textContent = "これは販売ページではなく、記録の保管ページです。";
-    if (els.heroText) els.heroText.textContent = "違和感①の切り口、違和感②の制作方法、違和感③の地名は、すべて同じ記録を別の形で隠していました。";
+    if (els.heroText) els.heroText.textContent = "商品説明、制作方法、出身地はすべて別の出来事を隠すための置き換えです。";
     if (els.shareWrap) els.shareWrap.classList.remove("hidden");
   } else {
     document.title = "こもれびぬい｜やさしいぬくもりのぬいぐるみ";
@@ -299,6 +285,9 @@ function renderDetail() {
       } else {
         els.detailBirthplace.textContent = product.birthplace || "";
       }
+    } else if (state.mode === "truth") {
+      els.detailBirthplace.classList.add("birthplace-dogear", "revealed-place");
+      els.detailBirthplace.textContent = product.foundPlace || product.birthplace || "";
     } else {
       els.detailBirthplace.textContent = product.birthplace || "";
     }
@@ -311,16 +300,6 @@ function renderDetail() {
       els.detailCraft.textContent = product.craftTruth || product.craftNormal || "";
     } else {
       els.detailCraft.textContent = product.craftNormal || "";
-    }
-  }
-
-  if (els.truthSummary) {
-    if (state.mode === "truth") {
-      els.truthSummary.innerHTML = buildTruthSummary(product);
-      els.truthSummary.classList.remove("hidden");
-    } else {
-      els.truthSummary.innerHTML = "";
-      els.truthSummary.classList.add("hidden");
     }
   }
 
@@ -380,7 +359,7 @@ function renderBrand() {
   if (!els.brandTitle || !els.brandText) return;
   if (state.mode === "truth") {
     els.brandTitle.textContent = "保管記録について";
-    els.brandText.textContent = "違和感①で見えた切り口、違和感②で読めた制作手順、違和感③で示された地名は、それぞれ別々の異常ではありません。ひとつの出来事を、商品画像・説明文・出身地の形に分解して隠していた記録です。";
+    els.brandText.textContent = "ここに並んでいた名称や説明は、すべて別の出来事を隠すための置き換えです。かわいい商品に見えたものは、別の形で残された記録でした。";
   } else {
     els.brandTitle.textContent = "こもれびぬいについて";
     els.brandText.textContent = "こもれびぬいは、日常にそっと寄り添うぬいぐるみをテーマに、小さな工房で制作を続けています。素材のやわらかさと、長く一緒に過ごせる表情づくりを大切にしています。";

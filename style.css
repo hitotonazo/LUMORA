@@ -843,3 +843,13 @@ body[data-mode="anomaly3"] #detail-birthplace.revealed-place{color:#7c0606;font-
   .review-body{font-size:14px; line-height:1.8}
   .review-meta{text-align:left}
 }
+
+
+.truth-summary{margin-top:18px;padding:16px 18px;border:1px solid var(--line);border-radius:18px;background:#fffaf7}
+.truth-summary-head{font-weight:800;margin-bottom:10px}
+.truth-summary-list{margin:0;padding-left:1.2em;display:grid;gap:10px}
+.truth-summary-list li{line-height:1.8}
+.review-stars[aria-label="記録"], .review-stars{letter-spacing:.08em}
+body[data-mode="truth"] .truth-summary{background:var(--truth-surface);border-color:var(--truth-line);color:var(--truth-text)}
+body[data-mode="truth"] .truth-summary-head{color:#ffb5c1}
+body[data-mode="truth"] .truth-summary-list li{color:var(--truth-muted)}

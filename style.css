@@ -846,3 +846,9 @@ body[data-mode="truth"] #detail-birthplace.revealed-place{color:#7c0606;font-wei
   .review-body{font-size:14px; line-height:1.8}
   .review-meta{text-align:left}
 }
+
+
+/* Disable mosaic in truth mode */
+body[data-mode="truth"] .anomaly1-mosaic::after {
+  display: none !important;
+}

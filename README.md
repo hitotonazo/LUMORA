@@ -28,3 +28,17 @@ inspectImageSources()
 - 各ぬいぐるみに `truthBackImage` を追加済み
 - ダミー画像は `images/truth/back/` と `r2-upload/images/truth/back/` に同梱
 - R2差し替え時は同名PNGを上書きするだけで反映できます
+
+
+## URL mode alias mapping
+推測されやすい `anomaly1 / anomaly2 / anomaly3 / truth` をURLに直接出さないよう、
+`script.js` で URL表示名 と 内部状態 を分離しています。
+
+現在の設定:
+- `?mode=home` -> `normal`
+- `?mode=haze` -> `anomaly1`
+- `?mode=thread` -> `anomaly2`
+- `?mode=trace` -> `anomaly3`
+- `?mode=archive` -> `truth`
+
+別サイトで流用する場合は `MODE_ALIASES` だけ差し替えてください。

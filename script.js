@@ -1,5 +1,23 @@
 const MODES = ["normal", "anomaly1", "anomaly2", "anomaly3", "truth"];
 
+/*
+  URL表示名と内部状態を分離するためのマップ
+  - 左: URLに出す値
+  - 右: 内部状態
+  今後別案件でも、この表だけ差し替えれば流用できます
+*/
+const MODE_ALIASES = {
+  home: "normal",
+  haze: "anomaly1",
+  thread: "anomaly2",
+  trace: "anomaly3",
+  archive: "truth"
+};
+
+const MODE_TO_ALIAS = Object.fromEntries(
+  Object.entries(MODE_ALIASES).map(([alias, mode]) => [mode, alias])
+);
+
 const state = {
   mode: "normal",
   products: [],
@@ -65,13 +83,15 @@ async function init() {
 
 function getModeFromUrl() {
   const params = new URLSearchParams(location.search);
-  const mode = params.get("mode") || "normal";
-  return MODES.includes(mode) ? mode : "normal";
+  const raw = params.get("mode") || "home";
+  const resolved = MODE_ALIASES[raw] || raw;
+  return MODES.includes(resolved) ? resolved : "normal";
 }
 
 function updateUrlMode(mode) {
   const url = new URL(location.href);
-  url.searchParams.set("mode", mode);
+  const alias = MODE_TO_ALIAS[mode] || mode;
+  url.searchParams.set("mode", alias);
   history.pushState({}, "", url);
 }
 

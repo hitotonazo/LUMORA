@@ -490,6 +490,28 @@ function bindEvents() {
     window.open(shareUrl, "_blank", "noopener,noreferrer");
   });
 
+
+  const debugAlterBtn = document.getElementById("debug-alter-btn");
+  debugAlterBtn?.addEventListener("click", () => {
+    debugAlterBtn.classList.add("is-waiting");
+    debugAlterBtn.textContent = "5秒後に改変";
+    window.setTimeout(() => {
+      debugAlterBtn.classList.remove("is-waiting");
+      debugAlterBtn.textContent = "DEBUG改変";
+
+      // デバッグ専用：現在の状態から次の段階へ進める。
+      const nextModeMap = {
+        normal: "anomaly1",
+        anomaly1: "anomaly2",
+        anomaly2: "anomaly3",
+        anomaly3: "truth",
+        truth: "truth"
+      };
+
+      runSiteAlteredOverlay(nextModeMap[state.mode] || "anomaly1");
+    }, 5000);
+  });
+
   window.addEventListener("popstate", () => setMode(getModeFromUrl()));
 }
 

@@ -852,3 +852,42 @@ body[data-mode="truth"] #detail-birthplace.revealed-place{color:#7c0606;font-wei
 body[data-mode="truth"] .anomaly1-mosaic::after {
   display: none !important;
 }
+
+
+/* ===== Debug: 5秒後にサイト改変演出 ===== */
+.debug-alter-btn {
+  margin-left: 18px;
+  padding: 8px 12px;
+  border: 1px solid rgba(120, 40, 40, 0.35);
+  border-radius: 999px;
+  background: rgba(120, 20, 20, 0.08);
+  color: #7c0606;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.debug-alter-btn:hover {
+  background: rgba(120, 20, 20, 0.14);
+}
+
+.debug-alter-btn.is-waiting {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+body[data-mode="truth"] .debug-alter-btn {
+  border-color: rgba(180, 70, 70, 0.5);
+  background: rgba(130, 20, 20, 0.18);
+  color: #d36b6b;
+}
+
+@media (max-width: 720px) {
+  .debug-alter-btn {
+    padding: 6px 9px;
+    font-size: 10px;
+    margin-left: 8px;
+  }
+}
